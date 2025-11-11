@@ -1,17 +1,27 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
-import ServiceData from "../../../public/data/ServiceData";
 import ReuseSearchInput from "../../ui/Form/ReuseSearchInput";
 import AdminServiceTable from "../../ui/Tables/AdminServiceTable";
 import DeleteCategoryModal from "../../ui/Modal/Category/DeleteCategoryModal";
+import { useGetAllServicesQuery } from "../../redux/features/allServices/allServicesApi";
+import { IService } from "../../types/service.type";
 
 const AdminAllServices = () => {
-  const data: any = ServiceData;
   const [page, setPage] = useState(1);
   const [searchText, setSearchText] = useState("");
   console.log(searchText);
 
   const limit = 12;
+
+  const { data, isFetching } = useGetAllServicesQuery({
+    page: page,
+    limit: limit,
+    search: searchText,
+  });
+
+  const allServices: IService[] = data?.data?.attributes?.result || [];
+  const totalServices: number =
+    data?.data?.attributes?.pagination?.totalResults || 0;
 
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [currentRecord, setCurrentRecord] = useState<any | null>(null);
@@ -51,12 +61,12 @@ const AdminAllServices = () => {
         style={{ boxShadow: "0px 0px 3px 0.5px #00000010" }}
       >
         <AdminServiceTable
-          data={data}
-          loading={false}
+          data={allServices}
+          loading={isFetching}
           showDeletekModal={showDeleteModal}
           setPage={setPage}
           page={page}
-          total={data.length}
+          total={totalServices}
           limit={limit}
         />
       </div>

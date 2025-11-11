@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
-import { Space, Tooltip } from "antd";
-import { MdDelete } from "react-icons/md";
+import { Image } from "antd";
 import ReuseTable from "../../utils/ReuseTable";
-import ReuseButton from "../Button/ReuseButton";
+import { getImageUrl } from "../../helpers/config/envConfig";
+import { AllImages } from "../../../public/images/AllImages";
 
 // Define the type for the props
 interface AdminServiceTableProps {
@@ -19,12 +19,13 @@ interface AdminServiceTableProps {
 const AdminServiceTable: React.FC<AdminServiceTableProps> = ({
   data,
   loading,
-  showDeletekModal,
+  // showDeletekModal,
   setPage,
   page,
   total,
   limit,
 }) => {
+  const serverUrl = getImageUrl();
   const mainColumns = [
     {
       title: "Serial ID",
@@ -35,59 +36,77 @@ const AdminServiceTable: React.FC<AdminServiceTableProps> = ({
     },
     {
       title: "Service Name",
-      dataIndex: "ServiceName",
-      key: "ServiceName",
+      dataIndex: "serviceName",
+      key: "serviceName",
       fixed: "left",
     },
     {
       title: "Category",
-      dataIndex: "Category",
-      key: "Category",
+      dataIndex: "categoryName",
+      key: "categoryName",
       fixed: "left",
     },
-    { title: "Provider Name", dataIndex: "ProviderName", key: "ProviderName" },
-    { title: "Description", dataIndex: "Description", key: "Description" },
-    { title: "Time", dataIndex: "Time", key: "Time" },
-    { title: "Price Range", dataIndex: "PriceRange", key: "PriceRange" },
-    { title: "Own Tools", dataIndex: "OwnTools", key: "OwnTools" },
-    { title: "Extra Tools", dataIndex: "ExtraTools", key: "ExtraTools" },
+    {
+      title: "Provider Name",
+      dataIndex: "providerName",
+      key: "providerName",
+    },
+    {
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
+      width: 400,
+    },
+    {
+      title: "Time",
+      dataIndex: "estimatedTimeMin",
+      key: "estimatedTimeMin",
+      render: (_: any, record: any) =>
+        `${record.estimatedTimeMin} - ${record.estimatedTimeMax} mins`,
+    },
+    {
+      title: "Price",
+      dataIndex: "price",
+      key: "price",
+      render: (price: number) => `$${price}`,
+    },
+    {
+      title: "Own Tools",
+      dataIndex: "haveTools",
+      key: "haveTools",
+      render: (haveTools: boolean) => (haveTools ? "Yes" : "No"),
+    },
+    {
+      title: "Extra Tools",
+      dataIndex: "needTools",
+      key: "needTools",
+      render: (tools: string[]) => (tools?.length ? tools.join(", ") : "N/A"),
+    },
     {
       title: "Work Image",
-      dataIndex: "WorkImage",
-      key: "WorkImage",
-      render: () => (
-        <ReuseButton variant="secondary" className="!py-4 !px-3">
-          View Image
-        </ReuseButton>
+      dataIndex: "image",
+      key: "image",
+      render: (image: string) => (
+        <Image src={image ? serverUrl + image : AllImages?.cover} width={80} />
       ),
     },
-    {
-      title: "Comparison Image",
-      dataIndex: "ComparisonImage",
-      key: "ComparisonImage",
-      render: () => (
-        <ReuseButton variant="secondary" className="!py-4 !px-3">
-          View Image
-        </ReuseButton>
-      ),
-    },
-    {
-      title: "Action",
-      key: "action",
-      render: (_: unknown, record: any) => (
-        <Space size="middle">
-          <Tooltip placement="left" title="Delete">
-            <button
-              className="!p-0 !bg-transparent !border-none !text-error-color cursor-pointer"
-              onClick={() => showDeletekModal(record)}
-            >
-              <MdDelete style={{ fontSize: "24px" }} />
-            </button>
-          </Tooltip>
-        </Space>
-      ),
-      align: "center",
-    },
+    // {
+    //   title: "Action",
+    //   key: "action",
+    //   render: (_: unknown, record: any) => (
+    //     <Space size="middle">
+    //       <Tooltip placement="left" title="Delete">
+    //         <button
+    //           className="!p-0 !bg-transparent !border-none !text-error-color cursor-pointer"
+    //           onClick={() => showDeletekModal(record)}
+    //         >
+    //           <MdDelete style={{ fontSize: "24px" }} />
+    //         </button>
+    //       </Tooltip>
+    //     </Space>
+    //   ),
+    //   align: "center",
+    // },
   ];
 
   const columns = mainColumns;
