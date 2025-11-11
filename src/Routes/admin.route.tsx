@@ -21,9 +21,9 @@ import AdminAllServiceApprovals from "../pages/Admin/AdminAllServiceApprovals";
 
 export const adminPaths = [
   {
-    path: "dashboard",
+    path: "overview",
     element: <AdminDashboard />,
-    key: "dashboard",
+    key: "overview",
     name: "Dashboard",
     icon: dashboardLogo,
   },

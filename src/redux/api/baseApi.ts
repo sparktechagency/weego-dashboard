@@ -8,17 +8,12 @@ const baseQuery = fetchBaseQuery({
   baseUrl: getBaseUrl(),
   credentials: "include",
   prepareHeaders: (headers) => {
-    const token = Cookies.get("pianofesta_accessToken");
-    const signUpToken = getFromLocalStorage("pianofesta_createUserToken");
+    const token = Cookies.get("weego_accessToken");
 
-    const changePassToken = getFromLocalStorage("pianofesta_otp_match_token");
+    const changePassToken = getFromLocalStorage("weego_otp_match_token");
 
     if (token) {
       headers.set("authorization", `Bearer ${token}`);
-    }
-
-    if (signUpToken) {
-      headers.set("SignUpToken", `signUpToken ${signUpToken}`);
     }
 
     if (changePassToken) {

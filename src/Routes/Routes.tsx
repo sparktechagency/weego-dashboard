@@ -19,32 +19,26 @@ import UpdatePassword from "../pages/Auth/UpdatePassword";
 import NotFound from "../ui/NotFound/NotFound";
 import DashboardLayout from "../Components/Layout/DashboardLayout";
 import { commonPaths } from "./common.route";
-
-interface User {
-  email: string;
-  password: string;
-  role: string;
-}
+import useUserData from "../hooks/useUserData";
 
 // eslint-disable-next-line react-refresh/only-export-components
 function AuthRedirect() {
+  const user = useUserData();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const user = JSON.parse(
-      localStorage.getItem("user_data") || "null"
-    ) as User | null;
-    if (user && user.role) {
-      navigate(`/${user.role}/dashboard`, { replace: true });
+    if (user && user?.role?.[0] === "admin") {
+      navigate(`/${user?.role?.[0]}/overview`, {
+        replace: true,
+      });
     } else {
       navigate("/sign-in", { replace: true });
     }
-  }, [navigate]);
+  }, [navigate, user]);
 
   // Optionally display a loading indicator
   return <Loading />;
 }
-
 // Define routes with TypeScript types
 const router: RouteObject[] = [
   {

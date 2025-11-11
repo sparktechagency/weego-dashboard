@@ -16,9 +16,10 @@ import Sider from "antd/es/layout/Sider";
 import Topbar from "../Shared/Topbar";
 import { AllImages } from "../../../public/images/AllImages";
 import { commonPaths } from "../../Routes/common.route";
+import useUserData from "../../hooks/useUserData";
 
 const DashboardLayout = () => {
-  const userRole = JSON.parse(localStorage.getItem("user_data") || "null");
+  const userData = useUserData();
   const location = useLocation();
 
   const [openKeys, setOpenKeys] = useState<string[]>([]);
@@ -35,7 +36,7 @@ const DashboardLayout = () => {
     }
   };
 
-  const defaultUrl = userRole?.role === "admin" ? "/admin" : "/";
+  const defaultUrl = userData?.role?.[0] === "admin" ? "/admin" : "/";
   const normalizedPath = location.pathname.replace(defaultUrl, "");
 
   const [collapsed, setCollapsed] = useState(false);
@@ -60,12 +61,15 @@ const DashboardLayout = () => {
 
   const activeKeys = getActiveKeys(normalizedPath);
   const menuItems =
-    userRole?.role === "admin"
+    userData?.role?.[0] === "admin"
       ? //   ? sidebarItemsGenerator(adminPaths, "admin")
-        sidebarItemsGenerator(adminPaths, userRole?.role)
+        sidebarItemsGenerator(adminPaths, userData?.role?.[0])
       : [];
 
-  const otherItem = sidebarItemsGenerator(commonPaths, userRole?.role);
+  const otherItem = sidebarItemsGenerator(
+    commonPaths,
+    userData?.role?.[0] as string
+  );
 
   otherItem.push({
     key: "logout",

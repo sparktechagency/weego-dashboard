@@ -1,22 +1,57 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { Checkbox } from "antd";
+import { Checkbox, Form } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import Container from "../../ui/Container";
 import ReusableForm from "../../ui/Form/ReuseForm";
 import ReuseInput from "../../ui/Form/ReuseInput";
 import ReuseButton from "../../ui/Button/ReuseButton";
 import { AllImages } from "../../../public/images/AllImages";
+import { useLoginMutation } from "../../redux/features/auth/authApi";
+import useUserData from "../../hooks/useUserData";
+import { useEffect } from "react";
+import tryCatchWrapper from "../../utils/tryCatchWrapper";
+import Cookies from "js-cookie";
+import { toast } from "sonner";
 
 const SignIn = () => {
+  const [form] = Form.useForm();
   const router = useNavigate();
-  const onFinish = (values: any) => {
-    const data = {
-      ...values,
-      role: "admin",
-    };
-    localStorage.setItem("user_data", JSON.stringify(data));
-    router("/");
+
+  const [login] = useLoginMutation();
+
+  const userExist = useUserData();
+
+  useEffect(() => {
+    if (userExist?.role?.[0] === "admin") {
+      router("/", { replace: true });
+    }
+  }, [router, userExist]);
+
+  const onFinish = async (values: any) => {
+    const res = await tryCatchWrapper(
+      login,
+      { body: { ...values, role: "admin" } },
+      "Signing In..."
+    );
+    console.log(res);
+    if (
+      res?.statusCode === 200 &&
+      res?.data?.attributes?.role?.[0] === "admin"
+    ) {
+      Cookies.set("weego_accessToken", res?.data?.accessToken, {
+        path: "/",
+        expires: 365,
+        secure: false,
+      });
+      form.resetFields();
+      router("/", { replace: true });
+    } else if (res?.statusCode === 200 && res?.data?.user?.role !== "admin") {
+      form.resetFields();
+      toast.error("Access Denied", {
+        duration: 2000,
+      });
+    }
   };
   return (
     <div className="bg-secondary-color text-primary-color">

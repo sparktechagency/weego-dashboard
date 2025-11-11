@@ -1,4 +1,5 @@
 export const tagTypes = {
+  auth: "Auth",
   user: "User",
 };
 
