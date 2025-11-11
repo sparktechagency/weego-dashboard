@@ -2,13 +2,15 @@
 import { Modal } from "antd";
 import { FaUser, FaUserCheck } from "react-icons/fa6";
 import { MdCalendarToday } from "react-icons/md";
-import { AllImages } from "../../../../public/images/AllImages";
+import { formatDateTime } from "../../../utils/dateFormet";
+import { useGetBookingDetailsQuery } from "../../../redux/features/booking/bookingApi";
+import { IBooking } from "../../../types/booking.type";
+import SpinLoader from "../../SpinLoader";
 
 interface ViewServiceManagementModalProps {
   isViewModalVisible: boolean;
   handleCancel: () => void;
-  currentRecord: any;
-  isContractor?: any;
+  currentRecord: any; // পরিবর্তে তুমি strongly typed interface ব্যবহার করতে পারো
 }
 
 const ViewServiceManagementModal: React.FC<ViewServiceManagementModalProps> = ({
@@ -16,6 +18,13 @@ const ViewServiceManagementModal: React.FC<ViewServiceManagementModalProps> = ({
   handleCancel,
   currentRecord,
 }) => {
+  const { data, isFetching } = useGetBookingDetailsQuery(currentRecord?._id, {
+    skip: !isViewModalVisible || !currentRecord?._id,
+    refetchOnMountOrArgChange: true,
+  });
+  const bookingData: IBooking = data?.data?.attributes?.[0] || {};
+
+  console.log(bookingData);
   return (
     <Modal
       open={isViewModalVisible}
@@ -24,39 +33,52 @@ const ViewServiceManagementModal: React.FC<ViewServiceManagementModalProps> = ({
       centered
       className="lg:!w-[750px]"
     >
-      <div className="p-2">
-        <div className="text-base-color">
-          <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-base-color">
+      {isFetching ? (
+        <div className="h-96 w-full flex justify-center items-center">
+          <SpinLoader />
+        </div>
+      ) : (
+        <div className="p-2 text-base-color">
+          <h3 className="text-lg sm:text-xl lg:text-2xl font-bold">
             Task Details
           </h3>
-          <div className="flex flex-col gap-2">
-            <div className="flex justify-between items-center gap-5 mt-5 mb-3">
+
+          <div className="flex flex-col gap-2 mt-5">
+            <div className="flex justify-between items-center gap-5 mb-3">
               <p className="text-sm sm:text-base md:text-lg lg:text-xl font-bold">
                 Delivery
               </p>
               <p className="text-sm sm:text-base md:text-lg lg:text-xl font-bold">
-                {currentRecord?.Status === "Completed" ? (
+                {bookingData?.status === "completed" ? (
                   <span className="text-success-color">Completed</span>
-                ) : (
+                ) : bookingData?.status === "pending" ? (
                   <span className="text-warning-color">Pending</span>
+                ) : bookingData?.status === "cancelled" ? (
+                  <span className="text-danger-color">Cancel</span>
+                ) : (
+                  <span className="text-base-color">{bookingData?.status}</span>
                 )}
               </p>
             </div>
+
             <div className="flex items-center gap-2">
               <MdCalendarToday className="text-base sm:text-lg lge:text-xl font-semibold" />
               <p className="text-xs sm:text-sm lge:text-lg font-semibold">
-                Created: June 20 2025 at 10 : 00 AM
+                Created: {formatDateTime(bookingData?.createdAt)}
               </p>
             </div>
+
             <div className="flex items-center gap-2">
               <MdCalendarToday className="text-base sm:text-lg lge:text-xl font-semibold" />
               <p className="text-xs sm:text-sm lge:text-lg font-semibold">
-                Scheduled: June 20 2025 at 3:00 PM-5:00 PM
+                Scheduled:{" "}
+                {bookingData?.date ? formatDateTime(bookingData.date) : "N/A"}
               </p>
             </div>
           </div>
 
           <div className="my-5 h-[1px] bg-base-color/20"></div>
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mt-5 mb-3">
             <div>
               <div className="flex items-center gap-2">
@@ -67,14 +89,17 @@ const ViewServiceManagementModal: React.FC<ViewServiceManagementModalProps> = ({
               </div>
               <div className="bg-slate-100 p-4 rounded-xl mt-3">
                 <p className="text-xs sm:text-sm lge:text-lg mb-1 font-bold">
-                  Emily Davis
+                  {bookingData?.contractorName || "N/A"}
                 </p>
                 <p className="text-xs sm:text-sm lge:text-lg mb-1">
-                  emily.davis@email.com
+                  {bookingData?.contractorEmail || "N/A"}
                 </p>
-                <p className="text-xs sm:text-sm lge:text-lg">George Town</p>
+                <p className="text-xs sm:text-sm lge:text-lg">
+                  {bookingData?.addressDetails?.fullAddress || "N/A"}
+                </p>
               </div>
             </div>
+
             <div>
               <div className="flex items-center gap-2">
                 <FaUserCheck className="text-secondary-color text-base sm:text-lg md:text-xl lg:text-2xl font-bold" />
@@ -84,52 +109,57 @@ const ViewServiceManagementModal: React.FC<ViewServiceManagementModalProps> = ({
               </div>
               <div className="bg-slate-100 p-4 rounded-xl mt-3">
                 <p className="text-xs sm:text-sm lge:text-lg font-bold mb-1">
-                  Emily Davis
+                  {bookingData?.providerName || "N/A"}
                 </p>
                 <p className="text-xs sm:text-sm lge:text-lg mb-1">
-                  emily.davis@email.com
+                  {bookingData?.providerEmail || "N/A"}
                 </p>
-                <p className="text-xs sm:text-sm lge:text-lg">George Town</p>
+                <p className="text-xs sm:text-sm lge:text-lg">
+                  {bookingData?.providercontact1 ||
+                    bookingData?.providercontact2 ||
+                    "N/A"}
+                </p>
               </div>
             </div>
           </div>
+
           <div className="my-5 h-[1px] bg-base-color/20"></div>
+
           <div className="flex items-center gap-5 flex-wrap">
             <div>
               <p className="text-sm sm:text-base md:text-lg lg:text-xl font-bold">
                 Task Category
               </p>
-              <p className="text-xs sm:text-sm lg:text-lg mb-1">Gardening</p>
+              <p className="text-xs sm:text-sm lg:text-lg mb-1">
+                {bookingData?.categoryName || "N/A"}
+              </p>
             </div>
             <div>
               <p className="text-sm sm:text-base md:text-lg lg:text-xl font-bold">
                 Amount
               </p>
-              <p className="text-xs sm:text-sm lg:text-lg mb-1">$900</p>
+              <p className="text-xs sm:text-sm lg:text-lg mb-1">
+                ৳{bookingData?.total || 0}
+              </p>
             </div>
           </div>
+
           <div className="my-5 h-[1px] bg-base-color/20"></div>
+
           <div className="flex items-center gap-5 flex-wrap">
             <div>
               <p className="text-sm sm:text-base md:text-lg lg:text-xl font-bold">
                 Location
               </p>
               <p className="text-xs sm:text-sm lg:text-lg mb-1">
-                112 George Town , Cayman Island
+                {bookingData?.addressDetails?.fullAddress || "N/A"}
               </p>
             </div>
           </div>
+
           <div className="my-5 h-[1px] bg-base-color/20"></div>
-          {currentRecord?.Status === "Completed" ? (
-            <div className="flex items-center gap-5 flex-wrap">
-              <div>
-                <p className="text-sm sm:text-base md:text-lg lg:text-xl font-bold">
-                  Work Images
-                </p>
-                <img src={AllImages.cover} className="h-44 w-40 rounded mt-5" />
-              </div>
-            </div>
-          ) : (
+
+          {bookingData?.status === "cancelled" && (
             <div className="flex items-center gap-5 flex-wrap">
               <div>
                 <p className="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-error-color">
@@ -137,20 +167,20 @@ const ViewServiceManagementModal: React.FC<ViewServiceManagementModalProps> = ({
                 </p>
                 <div className="bg-red-200 p-4 rounded-xl mt-3">
                   <p className="text-xs sm:text-sm lge:text-lg mb-1 font-bold">
-                    Cancelled by: Emily Davis
+                    Cancelled by: {bookingData?.canceledBy || "N/A"}
                   </p>
                   <p className="text-xs sm:text-sm lge:text-lg mb-1 font-bold">
-                    Reason: Changed mind
+                    Reason: {bookingData?.options || "N/A"}
                   </p>
                   <p className="text-xs sm:text-sm lge:text-lg mb-1 font-bold">
-                    Details: I’ve changed my mind. Don’t need it for now
+                    Details: {bookingData?.cancelationReason || "N/A"}
                   </p>
                 </div>
               </div>
             </div>
           )}
         </div>
-      </div>
+      )}
     </Modal>
   );
 };

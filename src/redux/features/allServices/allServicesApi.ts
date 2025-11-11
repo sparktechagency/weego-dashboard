@@ -8,8 +8,8 @@ const allServicesApi = baseApi.injectEndpoints({
     //   providesTags: [tagTypes.users],
     // }),
     getAllServices: builder.query({
-      query: ({ page, limit, search, role }) => ({
-        url: `/service/admin/all?page=${page}&limit=${limit}&search=${search}&role=${role}`,
+      query: ({ page, limit, search }) => ({
+        url: `/service/admin/all?page=${page}&limit=${limit}&search=${search}`,
         method: "GET",
       }),
       providesTags: [tagTypes.service],

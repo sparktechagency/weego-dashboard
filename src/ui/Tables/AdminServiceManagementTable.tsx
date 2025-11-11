@@ -26,20 +26,43 @@ const AdminServiceManagementTable: React.FC<
       render: (_: unknown, __: unknown, index: number) =>
         page * limit - limit + index + 1,
     },
-    { title: "User", dataIndex: "User", key: "User" },
+    {
+      title: "User",
+      dataIndex: "userFullName",
+      key: "userFullName",
+    },
     {
       title: "Service Provider",
-      dataIndex: "ServiceProvider",
-      key: "ServiceProvider",
+      dataIndex: "providerFullName",
+      key: "providerFullName",
     },
-    { title: "Service", dataIndex: "Service", key: "Service" },
-    { title: "Amount", dataIndex: "Amount", key: "Amount" },
+    {
+      title: "Service",
+      dataIndex: "serviceName",
+      key: "serviceName",
+    },
+    {
+      title: "Amount",
+      dataIndex: "price",
+      key: "price",
+      render: (price: number) => `$${price}`,
+    },
     {
       title: "Status",
-      dataIndex: "Status",
-      key: "Status",
-      render: (text: string) => (
-        <Tag color={text === "Completed" ? "green" : "red"}>{text}</Tag>
+      dataIndex: "status",
+      key: "status",
+      render: (status: string) => (
+        <Tag
+          color={
+            status === "completed"
+              ? "green"
+              : status === "pending"
+              ? "yellow"
+              : "red"
+          }
+        >
+          {status.charAt(0).toUpperCase() + status.slice(1)}
+        </Tag>
       ),
     },
     {

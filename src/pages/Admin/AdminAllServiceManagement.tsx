@@ -1,17 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
-import ServiceManagementData from "../../../public/data/ServiceManagementData";
-import ReuseSearchInput from "../../ui/Form/ReuseSearchInput";
 import AdminServiceManagementTable from "../../ui/Tables/AdminServiceManagementTable";
 import ViewServiceManagementModal from "../../ui/Modal/ServiceManagement/ViewServiceManagementModal";
+import { useGetAllBookingQuery } from "../../redux/features/booking/bookingApi";
+import { IBooking } from "../../types/booking.type";
 
 const AdminAllServicesManagement = () => {
-  const data: any = ServiceManagementData;
   const [page, setPage] = useState(1);
-  const [searchText, setSearchText] = useState("");
-  console.log(searchText);
 
   const limit = 12;
+
+  const { data, isFetching } = useGetAllBookingQuery({
+    page: page,
+    limit: limit,
+  });
+
+  const allServices: IBooking[] = data?.data?.attributes?.data || [];
+  const totalServices: number =
+    data?.data?.attributes?.pagination?.totalResults || 0;
 
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
   const [currentRecord, setCurrentRecord] = useState<any | null>(null);
@@ -32,13 +38,6 @@ const AdminAllServicesManagement = () => {
         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-base-color font-integralcf capitalize">
           Service Management
         </h1>
-        <div className="h-fit">
-          <ReuseSearchInput
-            placeholder="Search ..."
-            setSearch={setSearchText}
-            setPage={setPage}
-          />
-        </div>
       </div>
 
       <div
@@ -46,12 +45,12 @@ const AdminAllServicesManagement = () => {
         style={{ boxShadow: "0px 0px 3px 0.5px #00000010" }}
       >
         <AdminServiceManagementTable
-          data={data}
-          loading={false}
+          data={allServices}
+          loading={isFetching}
           showViewModal={showViewModal}
           setPage={setPage}
           page={page}
-          total={data.length}
+          total={totalServices}
           limit={limit}
         />
       </div>
