@@ -4,6 +4,8 @@ import ReusableForm from "../../Form/ReuseForm";
 import ReuseInput from "../../Form/ReuseInput";
 import ReuseUpload from "../../Form/ReuseUpload";
 import ReuseButton from "../../Button/ReuseButton";
+import { useAddCategoryMutation } from "../../../redux/features/category/categoryApi";
+import tryCatchWrapper from "../../../utils/tryCatchWrapper";
 
 interface AddCategoryModalProps {
   isAddModalVisible: boolean;
@@ -16,8 +18,33 @@ const AddCategoryModal: React.FC<AddCategoryModalProps> = ({
 }) => {
   const [form] = Form.useForm();
 
-  const onSubmit = (values: any) => {
-    console.log(values);
+  const [addCategory] = useAddCategoryMutation();
+
+  const onSubmit = async (values: any) => {
+    const formData = new FormData();
+
+    if (values?.icon?.[0]?.originFileObj) {
+      console.log("first");
+      formData.append("image", values?.icon?.[0]?.originFileObj);
+    }
+    const data = {
+      name: values?.name,
+      percentage: values?.percentage,
+    };
+
+    formData.append("data", JSON.stringify(data));
+    const res = await tryCatchWrapper(
+      addCategory,
+      { body: formData },
+      "Adding Category..."
+    );
+
+    console.log(res);
+
+    if (res?.statusCode === 201) {
+      form.resetFields();
+      handleCancel();
+    }
   };
   return (
     <Modal
@@ -43,13 +70,14 @@ const AddCategoryModal: React.FC<AddCategoryModalProps> = ({
               labelClassName="!font-semibold"
             />
             <ReuseInput
+              type="number"
               name="percentage"
-              label="Category Commission Percentage"
-              placeholder="Enter Category Commission Percentage"
+              label="Commission Percentage"
+              placeholder="Enter Commission Percentage"
               rules={[
                 {
                   required: true,
-                  message: "Category Commission Percentage is required",
+                  message: "Commission Percentage is required",
                 },
               ]}
               labelClassName="!font-semibold"
@@ -59,7 +87,7 @@ const AddCategoryModal: React.FC<AddCategoryModalProps> = ({
               label="Category Icon"
               name="icon"
               buttonText="Upload Image"
-              accept="image/svg+xml"
+              accept="image/*"
               maxCount={1}
               labelClassName="!font-semibold"
             />

@@ -4,6 +4,7 @@ import { Space, Tooltip } from "antd";
 import { MdDelete, MdEdit } from "react-icons/md";
 import ReuseTable from "../../utils/ReuseTable";
 import { AllImages } from "../../../public/images/AllImages";
+import { getImageUrl } from "../../helpers/config/envConfig";
 
 // Define the type for the props
 interface AllCategoryTableProps {
@@ -28,6 +29,7 @@ const AllCategoryTable: React.FC<AllCategoryTableProps> = ({
   total,
   limit,
 }) => {
+  const serverUrl = getImageUrl();
   const mainColumns = [
     {
       title: "Serial ID",
@@ -38,21 +40,25 @@ const AllCategoryTable: React.FC<AllCategoryTableProps> = ({
     },
     {
       title: "Category Icon",
-      dataIndex: "icon",
-      key: "icon",
-      render: () => <img src={AllImages.cover} className="w-10 h-10" />,
+      dataIndex: "image",
+      key: "image",
+      render: (image: string) => (
+        <img
+          src={image ? serverUrl + image : AllImages.cover}
+          className="w-10 h-10"
+        />
+      ),
     },
     {
       title: "Category Title",
       dataIndex: "name",
       key: "name",
-      render: () => <p>Home & Maintenance</p>,
     },
     {
       title: "Category Percentage",
       dataIndex: "percentage",
       key: "percentage",
-      render: () => <p>10%</p>,
+      render: (percentage: number) => <p>{percentage}%</p>,
     },
     {
       title: "Action",

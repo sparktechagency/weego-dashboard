@@ -4,6 +4,9 @@ import ReusableForm from "../../Form/ReuseForm";
 import ReuseInput from "../../Form/ReuseInput";
 import ReuseUpload from "../../Form/ReuseUpload";
 import ReuseButton from "../../Button/ReuseButton";
+import { useUpdateCategoryMutation } from "../../../redux/features/category/categoryApi";
+import { useEffect } from "react";
+import tryCatchWrapper from "../../../utils/tryCatchWrapper";
 
 interface EditCategoryModalProps {
   isEditModalVisible: boolean;
@@ -16,10 +19,43 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = ({
   currentRecord,
   handleCancel,
 }) => {
+  const [updateCategory] = useUpdateCategoryMutation();
   const [form] = Form.useForm();
 
-  const onSubmit = (values: any) => {
-    console.log({ values, currentRecord });
+  useEffect(() => {
+    if (currentRecord) {
+      form.setFieldsValue({
+        name: currentRecord?.name,
+        percentage: currentRecord?.percentage,
+      });
+    }
+  }, [currentRecord, form]);
+
+  const onSubmit = async (values: any) => {
+    const formData = new FormData();
+
+    if (values?.icon?.[0]?.originFileObj) {
+      formData.append("image", values?.icon?.[0]?.originFileObj);
+    }
+    const data = {
+      name: values?.name,
+      percentage: values?.percentage,
+    };
+
+    formData.append("data", JSON.stringify(data));
+
+    const res = await tryCatchWrapper(
+      updateCategory,
+      { body: formData, params: { id: currentRecord?._id } },
+      "Updating Category..."
+    );
+
+    console.log(res);
+
+    if (res?.statusCode === 201) {
+      form.resetFields();
+      handleCancel();
+    }
   };
   return (
     <Modal
@@ -61,7 +97,7 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = ({
               label="Category Icon"
               name="icon"
               buttonText="Upload Image"
-              accept="image/svg+xml"
+              accept="image/*"
               maxCount={1}
               labelClassName="!font-semibold"
             />

@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
-import CategoryData from "../../../public/data/CategoryData";
 import { IoMdAddCircleOutline } from "react-icons/io";
 
 import ReuseButton from "../../ui/Button/ReuseButton";
@@ -9,30 +7,46 @@ import AddCategoryModal from "../../ui/Modal/Category/AddCategoryModal";
 import EditCategoryModal from "../../ui/Modal/Category/EditCategoryModal";
 import ReuseSearchInput from "../../ui/Form/ReuseSearchInput";
 import DeleteModal from "../../ui/Modal/DeleteModal";
+import { ICategory } from "../../types/category.type";
+import {
+  useDeleteCategoryMutation,
+  useGetCategoryQuery,
+} from "../../redux/features/category/categoryApi";
+import tryCatchWrapper from "../../utils/tryCatchWrapper";
 
 const AdminAllCategory = () => {
-  const data: any = CategoryData;
+  const [deleteCategory] = useDeleteCategoryMutation();
+
   const [page, setPage] = useState(1);
   const [searchText, setSearchText] = useState("");
-  console.log(searchText);
 
   const limit = 12;
 
+  const { data, isFetching } = useGetCategoryQuery({
+    page: page,
+    limit: limit,
+    search: searchText,
+  });
+
+  const allCategory: ICategory[] = data?.data?.attributes?.category || [];
+  const totalCategory: number =
+    data?.data?.attributes?.pagination?.totalResults || 0;
+
+  console.log(allCategory);
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
-  const [currentRecord, setCurrentRecord] = useState<any | null>(null);
+  const [currentRecord, setCurrentRecord] = useState<ICategory | null>(null);
 
-  const showAddModal = (record: any) => {
-    setCurrentRecord(record);
+  const showAddModal = () => {
     setIsAddModalVisible(true);
   };
-  const showEditModal = (record: any) => {
+  const showEditModal = (record: ICategory) => {
     setCurrentRecord(record);
     setIsEditModalVisible(true);
   };
 
-  const showDeleteModal = (record: any) => {
+  const showDeleteModal = (record: ICategory) => {
     setCurrentRecord(record);
     setIsDeleteModalVisible(true);
   };
@@ -44,9 +58,14 @@ const AdminAllCategory = () => {
     setCurrentRecord(null);
   };
 
-  const handleDelete = (record: any) => {
-    handleCancel();
-    console.log(record);
+  const handleDelete = async (data: ICategory) => {
+    const response = await tryCatchWrapper(deleteCategory, {
+      params: { id: data?._id },
+    });
+
+    if (response?.statusCode === 201) {
+      handleCancel();
+    }
   };
 
   return (
@@ -79,13 +98,13 @@ const AdminAllCategory = () => {
         style={{ boxShadow: "0px 0px 3px 0.5px #00000010" }}
       >
         <AllCategoryTable
-          data={data}
-          loading={false}
+          data={allCategory}
+          loading={isFetching}
           showEditModal={showEditModal}
           showDeletekModal={showDeleteModal}
           setPage={setPage}
           page={page}
-          total={data.length}
+          total={totalCategory}
           limit={limit}
         />
       </div>
