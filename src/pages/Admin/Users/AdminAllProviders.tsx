@@ -1,35 +1,52 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
-import UsersData from "../../../../public/data/Users";
 import ReuseSearchInput from "../../../ui/Form/ReuseSearchInput";
 import UserModal from "../../../ui/Modal/User/UserModal";
 import BlockModal from "../../../ui/Modal/BlockModal";
 import UnblockModal from "../../../ui/Modal/UnblockModal";
 import AllProvidersTable from "../../../ui/Tables/AdminUsers/AllProvidersTable";
+import {
+  useBlockAndUnblockUserMutation,
+  useGetAllUsersQuery,
+} from "../../../redux/features/users/usersApi";
+import { IProvider } from "../../../types";
+import tryCatchWrapper from "../../../utils/tryCatchWrapper";
 
 const AdminAllProviders = () => {
-  const data: any = UsersData;
+  const [blockAndUnblockUser] = useBlockAndUnblockUserMutation();
   const [page, setPage] = useState(1);
+  const limit = 12;
   const [searchText, setSearchText] = useState("");
   console.log(searchText);
 
-  const limit = 12;
+  const { data, isFetching } = useGetAllUsersQuery({
+    page: page,
+    limit: limit,
+    search: searchText,
+    role: "provider",
+  });
+
+  const allUsers: IProvider[] = data?.data?.attributes?.users || [];
+  const totalUsers: number =
+    data?.data?.attributes?.pagination?.totalResults || 0;
+
+  console.log(data);
 
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
   const [isBlockModalVisible, setIsBlockModalVisible] = useState(false);
   const [isUnblockModalVisible, setIsUnblockModalVisible] = useState(false);
-  const [currentRecord, setCurrentRecord] = useState<any | null>(null);
+  const [currentRecord, setCurrentRecord] = useState<IProvider | null>(null);
 
-  const showViewUserModal = (record: any) => {
+  const showViewUserModal = (record: IProvider) => {
     setCurrentRecord(record);
     setIsViewModalVisible(true);
   };
 
-  const showBlockModal = (record: any) => {
+  const showBlockModal = (record: IProvider) => {
     setCurrentRecord(record);
     setIsBlockModalVisible(true);
   };
-  const showUnblockModal = (record: any) => {
+  const showUnblockModal = (record: IProvider) => {
     setCurrentRecord(record);
     setIsUnblockModalVisible(true);
   };
@@ -41,13 +58,29 @@ const AdminAllProviders = () => {
     setCurrentRecord(null);
   };
 
-  const handleBlock = (record: any) => {
-    handleCancel();
-    console.log(record);
+  const handleBlock = async (record: any) => {
+    const res = await tryCatchWrapper(
+      blockAndUnblockUser,
+      {
+        params: record?._id,
+      },
+      "Blocking..."
+    );
+    if (res?.statusCode === 200) {
+      handleCancel();
+    }
   };
-  const handleUnblock = (record: any) => {
-    handleCancel();
-    console.log(record);
+  const handleUnblock = async (record: any) => {
+    const res = await tryCatchWrapper(
+      blockAndUnblockUser,
+      {
+        params: record?._id,
+      },
+      "Unblocking..."
+    );
+    if (res?.statusCode === 200) {
+      handleCancel();
+    }
   };
   return (
     <div className=" min-h-[90vh]">
@@ -68,14 +101,14 @@ const AdminAllProviders = () => {
         style={{ boxShadow: "0px 0px 3px 0.5px #00000010" }}
       >
         <AllProvidersTable
-          data={data}
-          loading={false}
+          data={allUsers}
+          loading={isFetching}
           showViewModal={showViewUserModal}
           showBlockModal={showBlockModal}
           showUnblockModal={showUnblockModal}
           setPage={setPage}
           page={page}
-          total={data.length}
+          total={totalUsers}
           limit={limit}
         />
       </div>

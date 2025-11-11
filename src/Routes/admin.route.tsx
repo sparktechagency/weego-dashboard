@@ -1,7 +1,7 @@
 //* ------------------ICONS------------------
 import dashboardLogo from "/images/dashboard-logo/dashboard.svg";
 import usersLogo from "/images/dashboard-logo/users.svg";
-import serviceApprovalLogo from "/images/dashboard-logo/serviceApproval.svg";
+// import serviceApprovalLogo from "/images/dashboard-logo/serviceApproval.svg";
 import categoryLogo from "/images/dashboard-logo/category.svg";
 import messageLogo from "/images/dashboard-logo/message.svg";
 import serviceManagementLogo from "/images/dashboard-logo/serviceManagement.svg";
@@ -17,7 +17,7 @@ import AdminAllProviders from "../pages/Admin/Users/AdminAllProviders";
 import AdminAllContractors from "../pages/Admin/Users/AdminAllContractors";
 import AdminAllServices from "../pages/Admin/AdminAllServices";
 import AdminAllServicesManagement from "../pages/Admin/AdminAllServiceManagement";
-import AdminAllServiceApprovals from "../pages/Admin/AdminAllServiceApprovals";
+// import AdminAllServiceApprovals from "../pages/Admin/AdminAllServiceApprovals";
 
 export const adminPaths = [
   {
@@ -48,13 +48,13 @@ export const adminPaths = [
       },
     ],
   },
-  {
-    path: "service-approvals",
-    element: <AdminAllServiceApprovals />,
-    key: "service-approvals",
-    name: "Service Approvals",
-    icon: serviceApprovalLogo,
-  },
+  // {
+  //   path: "service-approvals",
+  //   element: <AdminAllServiceApprovals />,
+  //   key: "service-approvals",
+  //   name: "Service Approvals",
+  //   icon: serviceApprovalLogo,
+  // },
   {
     path: "category",
     element: <AdminAllCategory />,

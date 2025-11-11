@@ -1,19 +1,27 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
-import ContractorsData from "../../../../public/data/ContractorsData";
 import ReuseSearchInput from "../../../ui/Form/ReuseSearchInput";
 import UserModal from "../../../ui/Modal/User/UserModal";
 import BlockModal from "../../../ui/Modal/BlockModal";
 import UnblockModal from "../../../ui/Modal/UnblockModal";
 import AdminConstractorTable from "../../../ui/Tables/AdminUsers/AdminConstractorTable";
+import { useGetAllUsersQuery } from "../../../redux/features/users/usersApi";
 
 const AdminAllContractors = () => {
-  const data: any = ContractorsData;
   const [page, setPage] = useState(1);
-  const [searchText, setSearchText] = useState("");
-  console.log(searchText);
-
   const limit = 12;
+  const [searchText, setSearchText] = useState("");
+
+  const { data, isFetching } = useGetAllUsersQuery({
+    page: page,
+    limit: limit,
+    search: searchText,
+    role: "contractor",
+  });
+
+  const allUsers: any[] = data?.data?.attributes?.users || [];
+  const totalUsers: number =
+    data?.data?.attributes?.pagination?.totalResults || 0;
 
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
   const [isBlockModalVisible, setIsBlockModalVisible] = useState(false);
@@ -68,14 +76,14 @@ const AdminAllContractors = () => {
         style={{ boxShadow: "0px 0px 3px 0.5px #00000010" }}
       >
         <AdminConstractorTable
-          data={data}
-          loading={false}
+          data={allUsers}
+          loading={isFetching}
           showViewModal={showViewUserModal}
           showBlockModal={showBlockModal}
           showUnblockModal={showUnblockModal}
           setPage={setPage}
           page={page}
-          total={data.length}
+          total={totalUsers}
           limit={limit}
         />
       </div>
