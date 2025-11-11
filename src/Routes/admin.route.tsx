@@ -17,6 +17,9 @@ import AdminAllProviders from "../pages/Admin/Users/AdminAllProviders";
 import AdminAllContractors from "../pages/Admin/Users/AdminAllContractors";
 import AdminAllServices from "../pages/Admin/AdminAllServices";
 import AdminAllServicesManagement from "../pages/Admin/AdminAllServiceManagement";
+import AdminAllReports from "../pages/Admin/AdminAllReports";
+import AdminDeletedUsers from "../pages/Admin/AdminDeletedUsers";
+import AdminAllAdmin from "../pages/Admin/AdmiAllAdmin";
 // import AdminAllServiceApprovals from "../pages/Admin/AdminAllServiceApprovals";
 
 export const adminPaths = [
@@ -88,6 +91,27 @@ export const adminPaths = [
     element: <AdminAllTransaction />,
     key: "earning",
     name: "Earning",
+    icon: earningLogo,
+  },
+  {
+    path: "reports",
+    element: <AdminAllReports />,
+    key: "reports",
+    name: "Reports",
+    icon: earningLogo,
+  },
+  {
+    path: "deleted-accounts",
+    element: <AdminDeletedUsers />,
+    key: "deleted-accounts",
+    name: "Deleted Accounts",
+    icon: earningLogo,
+  },
+  {
+    path: "all-admin",
+    element: <AdminAllAdmin />,
+    key: "all-admin",
+    name: "Manage Admin",
     icon: earningLogo,
   },
 

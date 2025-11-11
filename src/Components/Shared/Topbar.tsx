@@ -3,6 +3,8 @@ import { Dropdown } from "antd";
 import { Link } from "react-router-dom";
 import { AllImages } from "../../../public/images/AllImages";
 import { FaBell, FaRegBell } from "react-icons/fa6";
+import { useGetProfileQuery } from "../../redux/features/profile/profileApi";
+import { getImageUrl } from "../../helpers/config/envConfig";
 
 const notifications = [
   {
@@ -39,7 +41,10 @@ const Topbar = ({
   collapsed: boolean;
   setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const user = JSON.parse(localStorage.getItem("user_data") || "null");
+  const { data } = useGetProfileQuery({});
+
+  const profileData = data?.data?.attributes;
+  console.log(profileData);
 
   const handleMenuClick = () => {
     setCollapsed(false);
@@ -65,13 +70,14 @@ const Topbar = ({
         </div>
       ))}
       <Link
-        to={`/${user?.role}/notifications`}
+        to={`/${profileData?.role?.[0]}/notifications`}
         className="w-2/3 mx-auto !bg-secondary-color !text-primary-color rounded-xl h-8 py-1"
       >
         See More
       </Link>
     </div>
   );
+  const serverUrl = getImageUrl();
   return (
     <div className="py-2  flex justify-between gap-0 items-center">
       <div className="flex items-center gap-2 text-base-color ">
@@ -91,7 +97,11 @@ const Topbar = ({
         </Dropdown>
         <Link to="profile">
           <img
-            src={AllImages.profile}
+            src={
+              profileData?.image
+                ? serverUrl + profileData?.image
+                : AllImages.profile
+            }
             alt="profile_pic"
             style={{ width: "40px", height: "40px", marginRight: "10px" }}
             className="rounded-full border border-secondary-color"

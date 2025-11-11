@@ -36,4 +36,13 @@ interface IContractor {
   createdAt: string;
   dob?: string;
 }
-export type { IProvider, IContractor };
+
+interface IDeletedUser {
+  _id: string;
+  youliveIn: string;
+  role: string;
+  reason: string;
+  createdAt: string;
+  fullName: string;
+}
+export type { IProvider, IContractor, IDeletedUser };

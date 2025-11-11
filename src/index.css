@@ -159,3 +159,7 @@ input[type="number"]::-webkit-outer-spin-button {
 .ant-pagination-item-container .ant-pagination-item-ellipsis:hover {
   color: #aa8fff !important;
 }
+
+.ant-upload-list-item-name {
+  width: 20ch !important;
+}

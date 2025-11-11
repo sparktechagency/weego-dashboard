@@ -54,7 +54,7 @@ const ViewServiceManagementModal: React.FC<ViewServiceManagementModalProps> = ({
                 ) : bookingData?.status === "pending" ? (
                   <span className="text-warning-color">Pending</span>
                 ) : bookingData?.status === "cancelled" ? (
-                  <span className="text-danger-color">Cancel</span>
+                  <span className="text-error-color">Cancel</span>
                 ) : (
                   <span className="text-base-color">{bookingData?.status}</span>
                 )}

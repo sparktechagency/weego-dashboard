@@ -29,6 +29,13 @@ const UsersApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: [tagTypes.user],
     }),
+    getUserRatio: builder.query({
+      query: ({ year }) => ({
+        url: `/users/user-ratio?year=${year}`,
+        method: "GET",
+      }),
+      providesTags: [tagTypes.user],
+    }),
   }),
 });
 
@@ -36,4 +43,5 @@ export const {
   useGetAllUsersQuery,
   useGetUserDetailsQuery,
   useBlockAndUnblockUserMutation,
+  useGetUserRatioQuery,
 } = UsersApi;

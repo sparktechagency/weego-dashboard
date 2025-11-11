@@ -17,6 +17,7 @@ import Topbar from "../Shared/Topbar";
 import { AllImages } from "../../../public/images/AllImages";
 import { commonPaths } from "../../Routes/common.route";
 import useUserData from "../../hooks/useUserData";
+import Cookies from "js-cookie";
 
 const DashboardLayout = () => {
   const userData = useUserData();
@@ -59,6 +60,12 @@ const DashboardLayout = () => {
     };
   }, []);
 
+  const handleLogout = () => {
+    Cookies.remove("weego_accessToken");
+    window.location.href = "/sign-in";
+    window.location.reload();
+  };
+
   const activeKeys = getActiveKeys(normalizedPath);
   const menuItems =
     userData?.role?.[0] === "admin"
@@ -83,7 +90,7 @@ const DashboardLayout = () => {
       />
     ),
     label: (
-      <div onClick={() => localStorage.removeItem("user_data")}>
+      <div onClick={handleLogout}>
         <NavLink to="/sign-in">Logout</NavLink>
       </div>
     ),
