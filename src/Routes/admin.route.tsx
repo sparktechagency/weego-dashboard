@@ -6,6 +6,9 @@ import categoryLogo from "/images/dashboard-logo/category.svg";
 import messageLogo from "/images/dashboard-logo/message.svg";
 import serviceManagementLogo from "/images/dashboard-logo/serviceManagement.svg";
 import earningLogo from "/images/dashboard-logo/earning.svg";
+import reportLogo from "/images/dashboard-logo/report.svg";
+import deleteLogo from "/images/dashboard-logo/delete.svg";
+import adminLogo from "/images/dashboard-logo/admin.svg";
 
 //* ------------------IMPORT COMPONENTS------------------
 import AdminDashboard from "../pages/Admin/AdminDashboard";
@@ -20,6 +23,7 @@ import AdminAllServicesManagement from "../pages/Admin/AdminAllServiceManagement
 import AdminAllReports from "../pages/Admin/AdminAllReports";
 import AdminDeletedUsers from "../pages/Admin/AdminDeletedUsers";
 import AdminAllAdmin from "../pages/Admin/AdmiAllAdmin";
+import AdminAllEarning from "../pages/Admin/AdminAllEarning";
 // import AdminAllServiceApprovals from "../pages/Admin/AdminAllServiceApprovals";
 
 export const adminPaths = [
@@ -88,9 +92,16 @@ export const adminPaths = [
   },
   {
     path: "earning",
-    element: <AdminAllTransaction />,
+    element: <AdminAllEarning />,
     key: "earning",
     name: "Earning",
+    icon: earningLogo,
+  },
+  {
+    path: "transaction",
+    element: <AdminAllTransaction />,
+    key: "transaction",
+    name: "Transaction",
     icon: earningLogo,
   },
   {
@@ -98,21 +109,21 @@ export const adminPaths = [
     element: <AdminAllReports />,
     key: "reports",
     name: "Reports",
-    icon: earningLogo,
+    icon: reportLogo,
   },
   {
     path: "deleted-accounts",
     element: <AdminDeletedUsers />,
     key: "deleted-accounts",
     name: "Deleted Accounts",
-    icon: earningLogo,
+    icon: deleteLogo,
   },
   {
     path: "all-admin",
     element: <AdminAllAdmin />,
     key: "all-admin",
     name: "Manage Admin",
-    icon: earningLogo,
+    icon: adminLogo,
   },
 
   {

@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import ReuseTable from "../../utils/ReuseTable";
+import { formatDate } from "../../utils/dateFormet";
 
 // Define the type for the props
-interface TransactionTableProps {
+interface EarningTableProps {
   data: any[]; // Replace `unknown` with the actual type of your data array
   loading: boolean;
   setPage?: (page: number) => void; // Function to handle pagination
@@ -12,7 +13,7 @@ interface TransactionTableProps {
   limit: number;
 }
 
-const TransactionTable: React.FC<TransactionTableProps> = ({
+const EarningTable: React.FC<EarningTableProps> = ({
   data,
   loading,
   setPage,
@@ -30,26 +31,31 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
     },
     {
       title: "Transaction ID",
-      dataIndex: "stripeTransferId", // Updated to match the actual data (transaction ID)
+      dataIndex: "stripeTransferId",
       key: "stripeTransferId",
     },
     {
-      title: "User Name",
-      dataIndex: "userName", // Updated to correct field
+      title: "Contractor Name",
+      dataIndex: "userName",
       key: "userName",
-      render: (text: string) => <p>{text}</p>, // Render user name dynamically
+      render: (text: string) => <p>{text}</p>,
     },
     {
       title: "Email",
-      dataIndex: "userEmail", // Updated to correct field
+      dataIndex: "userEmail",
       key: "userEmail",
-      render: (text: string) => <p>{text}</p>, // Render user email dynamically
+      render: (text: string) => <p>{text}</p>,
     },
     {
-      title: "Amount ($)",
-      dataIndex: "amount", // Updated to correct field (amount)
+      title: "Amount($)",
+      dataIndex: "amount",
       key: "amount",
-      render: (text: number) => <p>${text.toFixed(2)}</p>, // Render amount with 2 decimal places
+    },
+    {
+      title: "Date",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (text: string) => <p>{formatDate(text)}</p>,
     },
   ];
 
@@ -67,4 +73,4 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
   );
 };
 
-export default TransactionTable;
+export default EarningTable;

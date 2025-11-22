@@ -7,6 +7,7 @@ export const tagTypes = {
   deleted: "Deleted",
   profile: "Profile",
   allAdmin: "AllAdmin",
+  earning: "Earning",
 };
 
 export const tagTypesList = [
@@ -18,4 +19,5 @@ export const tagTypesList = [
   tagTypes.profile,
   tagTypes.allAdmin,
   tagTypes.auth,
+  tagTypes.earning,
 ];
