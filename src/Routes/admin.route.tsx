@@ -9,6 +9,8 @@ import earningLogo from "/images/dashboard-logo/earning.svg";
 import reportLogo from "/images/dashboard-logo/report.svg";
 import deleteLogo from "/images/dashboard-logo/delete.svg";
 import adminLogo from "/images/dashboard-logo/admin.svg";
+import appReportLogo from "/images/dashboard-logo/appReport.svg";
+import improvementLogo from "/images/dashboard-logo/improvement.svg";
 
 //* ------------------IMPORT COMPONENTS------------------
 import AdminDashboard from "../pages/Admin/AdminDashboard";
@@ -24,6 +26,8 @@ import AdminAllReports from "../pages/Admin/AdminAllReports";
 import AdminDeletedUsers from "../pages/Admin/AdminDeletedUsers";
 import AdminAllAdmin from "../pages/Admin/AdmiAllAdmin";
 import AdminAllEarning from "../pages/Admin/AdminAllEarning";
+import AdminAllAppReport from "../pages/Admin/AdminAllAppReport";
+import AdminImprovementSuggestion from "../pages/Admin/AdminImprovementSuggestion";
 // import AdminAllServiceApprovals from "../pages/Admin/AdminAllServiceApprovals";
 
 export const adminPaths = [
@@ -124,6 +128,20 @@ export const adminPaths = [
     key: "all-admin",
     name: "Manage Admin",
     icon: adminLogo,
+  },
+  {
+    path: "app-report",
+    element: <AdminAllAppReport />,
+    key: "app-report",
+    name: "App Reports",
+    icon: appReportLogo,
+  },
+  {
+    path: "improvement-suggestions",
+    element: <AdminImprovementSuggestion />,
+    key: "improvement-suggestions",
+    name: "Improvement Suggestions",
+    icon: improvementLogo,
   },
 
   {
