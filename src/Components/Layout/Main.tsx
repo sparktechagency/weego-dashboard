@@ -6,6 +6,7 @@ import router from "../../Routes/Routes";
 import { RouterProvider } from "react-router-dom";
 import { mainTheme } from "../../theme";
 import { Toaster } from "sonner";
+import { SocketProvider } from "../../context/SocketProvider";
 
 const Main = () => {
   return (
@@ -13,8 +14,10 @@ const Main = () => {
       <ConfigProvider theme={mainTheme}>
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>
-            <Toaster richColors position="top-center" />
-            <RouterProvider router={router} />
+            <SocketProvider>
+              <Toaster richColors position="top-center" />
+              <RouterProvider router={router} />
+            </SocketProvider>
           </PersistGate>
         </Provider>
       </ConfigProvider>

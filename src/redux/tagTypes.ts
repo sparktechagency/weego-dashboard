@@ -8,6 +8,7 @@ export const tagTypes = {
   profile: "Profile",
   allAdmin: "AllAdmin",
   earning: "Earning",
+  conversation: "Conversation",
 };
 
 export const tagTypesList = [
@@ -20,4 +21,5 @@ export const tagTypesList = [
   tagTypes.allAdmin,
   tagTypes.auth,
   tagTypes.earning,
+  tagTypes.conversation,
 ];

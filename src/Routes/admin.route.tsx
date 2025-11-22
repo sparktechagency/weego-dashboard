@@ -1,7 +1,6 @@
 //* ------------------ICONS------------------
 import dashboardLogo from "/images/dashboard-logo/dashboard.svg";
 import usersLogo from "/images/dashboard-logo/users.svg";
-// import serviceApprovalLogo from "/images/dashboard-logo/serviceApproval.svg";
 import categoryLogo from "/images/dashboard-logo/category.svg";
 import messageLogo from "/images/dashboard-logo/message.svg";
 import serviceManagementLogo from "/images/dashboard-logo/serviceManagement.svg";
@@ -16,7 +15,6 @@ import improvementLogo from "/images/dashboard-logo/improvement.svg";
 import AdminDashboard from "../pages/Admin/AdminDashboard";
 import Notifications from "../pages/Common/Notifications";
 import AdminAllCategory from "../pages/Admin/AdminAllCategory";
-import MessagePage from "../pages/Admin/MessagePage";
 import AdminAllTransaction from "../pages/Admin/AdminAllTransaction";
 import AdminAllProviders from "../pages/Admin/Users/AdminAllProviders";
 import AdminAllContractors from "../pages/Admin/Users/AdminAllContractors";
@@ -28,7 +26,7 @@ import AdminAllAdmin from "../pages/Admin/AdmiAllAdmin";
 import AdminAllEarning from "../pages/Admin/AdminAllEarning";
 import AdminAllAppReport from "../pages/Admin/AdminAllAppReport";
 import AdminImprovementSuggestion from "../pages/Admin/AdminImprovementSuggestion";
-// import AdminAllServiceApprovals from "../pages/Admin/AdminAllServiceApprovals";
+import ConversationPage from "../pages/Admin/ConversationPage";
 
 export const adminPaths = [
   {
@@ -75,7 +73,7 @@ export const adminPaths = [
   },
   {
     path: "messages",
-    element: <MessagePage />,
+    element: <ConversationPage />,
     key: "messages",
     name: "Messages",
     icon: messageLogo,

@@ -6,3 +6,4 @@ export * from "./report.type";
 export * from "./booking.type";
 export * from "./earning.type";
 export * from "./ReviewType";
+export * from "./conversation.type";
