@@ -33,7 +33,9 @@ const ImagePreviewer = ({
   };
   return isImage ? (
     <PhotoProvider>
-      <div className={`w-32 ${imgHeight ? `h-[${imgHeight}px]` : "h-auto"}`}>
+      <div
+        className={`w-32 ${imgHeight ? `h-[${imgHeight}px]` : "h-auto"}  mb-1`}
+      >
         <PhotoView src={fileUrl}>
           <img
             loading="lazy"
@@ -52,7 +54,7 @@ const ImagePreviewer = ({
       </div>
     </PhotoProvider>
   ) : (
-    <div className="flex items-center gap-2 px-3 py-2 rounded text-[#F9DD40] bg-secondary-color shadow max-w-xs text-sm">
+    <div className="flex items-center gap-2 px-3 py-2 mb-1 rounded text-[#F9DD40] bg-secondary-color shadow max-w-xs text-sm">
       <span className="truncate max-w-[150px]">{getFileName(filePath)}</span>
       <button
         onClick={() => handleDownload(fileUrl, getFileName(filePath))}

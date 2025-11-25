@@ -1,10 +1,4 @@
-import {
-  Link,
-  NavLink,
-  Outlet,
-  ScrollRestoration,
-  useLocation,
-} from "react-router-dom";
+import { Link, Outlet, ScrollRestoration, useLocation } from "react-router-dom";
 import { Layout, Menu, Typography } from "antd";
 import { Content, Header } from "antd/es/layout/layout";
 import { useEffect, useState } from "react";
@@ -91,7 +85,7 @@ const DashboardLayout = () => {
     ),
     label: (
       <div onClick={handleLogout}>
-        <NavLink to="/sign-in">Logout</NavLink>
+        <p>Logout</p>
       </div>
     ),
   });

@@ -25,7 +25,7 @@ const ConversationMessage = ({ userData, onlineUsers }: any) => {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const [messages, setMessages] = useState<any[]>([]);
   const [page, setPage] = useState(1);
-  const limit = 30;
+  const limit = 200;
 
   const {
     data: allMessages,
@@ -83,16 +83,17 @@ const ConversationMessage = ({ userData, onlineUsers }: any) => {
   }, [allMessages, page]);
 
   // Infinite scroll handler
+  // Fix scroll handler
   useEffect(() => {
     const handleScroll = () => {
       const container = messagesContainerRef.current;
       if (!container || isAllMessageFetching) return;
 
-      if (container.scrollTop === 0) {
-        if (
-          allMessages?.data?.attributes?.pagination?.totalResults &&
-          page < allMessages?.data?.attributes?.paginationmeta?.totalResults
-        ) {
+      if (container.scrollTop <= 50) {
+        // <-- safer threshold
+        const totalPages =
+          allMessages?.data?.attributes?.pagination?.totalPages || 1;
+        if (page < totalPages) {
           setPage((prev) => prev + 1);
         }
       }

@@ -1,110 +1,34 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState } from "react";
 import { FaRegBell } from "react-icons/fa6";
 import { MdArrowBackIos } from "react-icons/md";
-
-const notifications = [
-  {
-    id: 1,
-    message: "You have a new notification",
-    time: "Fri, 12:30pm",
-  },
-  {
-    id: 2,
-    message: "You have a new notification",
-    time: "Fri, 12:30pm",
-  },
-  {
-    id: 3,
-    message: "You have a new notification",
-    time: "Fri, 12:30pm",
-  },
-  {
-    id: 4,
-    message: "You have a new notification",
-    time: "Fri, 12:30pm",
-  },
-  {
-    id: 5,
-    message: "You have a new notification",
-    time: "Fri, 12:30pm",
-  },
-  {
-    id: 6,
-    message: "You have a new notification",
-    time: "Fri, 12:30pm",
-  },
-  {
-    id: 7,
-    message: "You have a new notification",
-    time: "Fri, 12:30pm",
-  },
-  {
-    id: 8,
-    message: "You have a new notification",
-    time: "Fri, 12:30pm",
-  },
-  {
-    id: 9,
-    message: "You have a new notification",
-    time: "Fri, 12:30pm",
-  },
-  {
-    id: 10,
-    message: "You have a new notification",
-    time: "Fri, 12:30pm",
-  },
-  {
-    id: 11,
-    message: "You have a new notification",
-    time: "Fri, 12:30pm",
-  },
-  {
-    id: 12,
-    message: "You have a new notification",
-    time: "Fri, 12:30pm",
-  },
-  {
-    id: 13,
-    message: "You have a new notification",
-    time: "Fri, 12:30pm",
-  },
-  {
-    id: 14,
-    message: "You have a new notification",
-    time: "Fri, 12:30pm",
-  },
-  {
-    id: 15,
-    message: "You have a new notification",
-    time: "Fri, 12:30pm",
-  },
-  {
-    id: 16,
-    message: "You have a new notification",
-    time: "Fri, 12:30pm",
-  },
-  {
-    id: 17,
-    message: "You have a new notification",
-    time: "Fri, 12:30pm",
-  },
-  {
-    id: 18,
-    message: "You have a new notification",
-    time: "Fri, 12:30pm",
-  },
-  {
-    id: 19,
-    message: "You have a new notification",
-    time: "Fri, 12:30pm",
-  },
-  {
-    id: 20,
-    message: "You have a new notification",
-    time: "Fri, 12:30pm",
-  },
-];
+import useUserData from "../../hooks/useUserData";
+import { useGetAllNotificationsQuery } from "../../redux/features/users/usersApi";
+import { FadeLoader } from "react-spinners";
+import { formatDateTime } from "../../utils/dateFormet";
+import { Pagination } from "antd";
 
 const Notifications = () => {
+  const [page, setPage] = useState(1);
+  const limit = 12;
+  const userData = useUserData();
+  const { data: notification, isFetching: notificationFetching } =
+    useGetAllNotificationsQuery(
+      { page: page, limit: limit },
+      {
+        skip: userData?.role?.[0] !== "admin" || !open,
+        refetchOnMountOrArgChange: true,
+      }
+    );
+
+  const allNotifications = notification?.data?.attributes?.notification || [];
+  if (notificationFetching) {
+    return (
+      <div className="flex items-center justify-center h-[80vh]">
+        <FadeLoader color="#aa8fff" />
+      </div>
+    );
+  }
   return (
     <div className=" bg-slate-50  rounded-xl">
       <div className="flex items-center bg-secondary-color gap-1 py-3 px-5 mb-3 rounded-tl-xl rounded-tr-xl">
@@ -118,9 +42,9 @@ const Notifications = () => {
         </h1>
       </div>
       <div className="px-4 sm:px-6 md:px-8 ">
-        {notifications.map((notification) => (
+        {allNotifications?.map((notification: any) => (
           <div
-            key={notification.id}
+            key={notification?._id}
             className="flex items-center space-x-3 p-2 border-b border-gray-300 last:border-none"
           >
             {/* Icon */}
@@ -131,12 +55,22 @@ const Notifications = () => {
             {/* Notification text */}
             <div className="flex flex-col">
               <span className="text-lg font-medium text-gray-700">
-                {notification.message}
+                {notification?.message?.en}
               </span>
-              <span className="text-sm text-gray-500">{notification.time}</span>
+              <span className="text-sm text-gray-500">
+                {formatDateTime(notification?.createdAt)}
+              </span>
             </div>
           </div>
         ))}
+      </div>
+      <div className="py-10 flex items-center justify-center">
+        {" "}
+        <Pagination
+          current={page}
+          onChange={(page) => setPage(page)}
+          total={notification?.data?.attributes?.pagination?.totalResults}
+        />
       </div>
     </div>
   );

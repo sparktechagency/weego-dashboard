@@ -36,6 +36,26 @@ const UsersApi = baseApi.injectEndpoints({
       }),
       providesTags: [tagTypes.user],
     }),
+    getAllCounts: builder.query({
+      query: () => ({
+        url: `/users/counts`,
+        method: "GET",
+      }),
+      providesTags: [tagTypes.user, tagTypes.earning],
+    }),
+    getAllEarningRatio: builder.query({
+      query: ({ year }) => ({
+        url: `/transaction/earning-ratio?year=${year}`,
+        method: "GET",
+      }),
+      providesTags: [tagTypes.earning],
+    }),
+    getAllNotifications: builder.query({
+      query: ({ page, limit }) => ({
+        url: `/notifications/notification-adminend?page=${page}&limit=${limit}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -44,4 +64,7 @@ export const {
   useGetUserDetailsQuery,
   useBlockAndUnblockUserMutation,
   useGetUserRatioQuery,
+  useGetAllCountsQuery,
+  useGetAllEarningRatioQuery,
+  useGetAllNotificationsQuery,
 } = UsersApi;

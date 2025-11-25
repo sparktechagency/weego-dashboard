@@ -56,6 +56,8 @@ const AdminServiceManagementTable: React.FC<
           color={
             status === "completed"
               ? "green"
+              : status === "accepted"
+              ? "processing"
               : status === "pending"
               ? "yellow"
               : "red"

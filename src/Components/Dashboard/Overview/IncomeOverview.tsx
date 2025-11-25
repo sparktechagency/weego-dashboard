@@ -1,12 +1,15 @@
 import { useState } from "react";
 import Bar_Chart from "../../Chart/BarChart";
 import YearOption from "../../../utils/YearOption";
+import { useGetAllEarningRatioQuery } from "../../../redux/features/users/usersApi";
 
 const IncomeOverview = () => {
   const currentYear = new Date().getFullYear();
   const [year, setYear] = useState(currentYear);
 
-  console.log(year);
+  const { data } = useGetAllEarningRatioQuery({ year: year });
+
+  const ratio = data?.data?.attributes || [];
   return (
     <div
       className="w-full lg:w-1/2 p-3 bg-[#FFFFFF] rounded-lg flex flex-col"
@@ -23,7 +26,7 @@ const IncomeOverview = () => {
         </div>
       </div>
       <div>
-        <Bar_Chart />
+        <Bar_Chart ratio={ratio} />
       </div>
     </div>
   );

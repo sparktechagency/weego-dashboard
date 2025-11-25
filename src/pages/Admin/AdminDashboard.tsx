@@ -1,6 +1,6 @@
 import IncomeOverview from "../../Components/Dashboard/Overview/IncomeOverview";
 import OverviewCard from "../../Components/Dashboard/Overview/OverviewCards";
-import RecentUser from "../../Components/Dashboard/Overview/RecentUser";
+// import RecentUser from "../../Components/Dashboard/Overview/RecentUser";
 import UserOverview from "../../Components/Dashboard/Overview/UserOverview";
 
 const AdminDashboard = () => {
@@ -18,9 +18,9 @@ const AdminDashboard = () => {
           <UserOverview />
           <IncomeOverview />
         </div>
-        <div>
+        {/* <div>
           <RecentUser />
-        </div>
+        </div> */}
       </>
     </div>
   );
