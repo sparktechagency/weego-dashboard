@@ -1,43 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Form, Modal } from "antd";
 import ReusableForm from "../../Form/ReuseForm";
-import ReuseInput from "../../Form/ReuseInput";
-// import { RiShieldUserFill, RiSchoolFill } from "react-icons/ri";
-// import { FaPhone } from "react-icons/fa6";
 import ReuseButton from "../../Button/ReuseButton";
 import tryCatchWrapper from "../../../utils/tryCatchWrapper";
 import { useUpdateAdminMutation } from "../../../redux/features/allAdmin/allAdminApi";
 import { useEffect } from "react";
+import ReuseSelect from "../../Form/ReuseSelect";
+import { categoryOptions } from "./AddAdminModal";
 
 interface EditAdminModalProps {
   isEditModalVisible: boolean;
   handleCancel: () => void;
   currentRecord: any;
 }
-
-const inputStructure = [
-  {
-    name: "name",
-    type: "text",
-    inputType: "normal",
-    label: "Full Name",
-    placeholder: "Enter Full Name",
-    labelClassName: "!font-bold",
-    // prefix: <RiSchoolFill className="mr-1 text-secondary-color" />,
-    rules: [{ required: true, message: "Full Name is required" }],
-  },
-
-  {
-    name: "phoneNumber",
-    type: "text",
-    inputType: "normal",
-    label: "Phone Number",
-    placeholder: "Enter Phone Number",
-    labelClassName: "!font-bold",
-    // prefix: <RiShieldUserFill className="mr-1 text-secondary-color" />,
-    rules: [{ required: true, message: "Admin Phone Number is required" }],
-  },
-];
 
 const EditAdminModal: React.FC<EditAdminModalProps> = ({
   isEditModalVisible,
@@ -51,16 +26,26 @@ const EditAdminModal: React.FC<EditAdminModalProps> = ({
     form.setFieldsValue(currentRecord);
   }, [currentRecord, form]);
 
+  const handleCategoryChange = (values: string[], form: any) => {
+    if (values.includes("all")) {
+      // If "all" is selected, ignore others
+      form.setFieldsValue({ category: ["all"] });
+    } else {
+      form.setFieldsValue({ category: values });
+    }
+  };
+
   const handleFinish = async (values: any) => {
     const res = await tryCatchWrapper(
       editAdmin,
       {
-        body: { ...values, userId: currentRecord?._id },
+        body: { ...values },
+        params: currentRecord?._id,
       },
       "Updating Admin..."
     );
 
-    if (res?.statusCode === 200) {
+    if (res?.statusCode === 201) {
       form.resetFields();
       handleCancel();
     }
@@ -85,20 +70,15 @@ const EditAdminModal: React.FC<EditAdminModalProps> = ({
               form={form}
               handleFinish={handleFinish}
             >
-              {inputStructure.map((input, index) => (
-                <ReuseInput
-                  key={index}
-                  name={input.name}
-                  Typolevel={5}
-                  //   prefix={input.prefix}
-                  inputType={input.inputType}
-                  type={input.type}
-                  label={input.label}
-                  placeholder={input.placeholder}
-                  labelClassName={input.labelClassName}
-                  rules={input.rules}
-                />
-              ))}
+              <ReuseSelect
+                Typolevel={5}
+                name="categoryPermissions"
+                options={categoryOptions}
+                label="Category"
+                placeholder="Select Category"
+                mode="multiple"
+                onChange={(values: any) => handleCategoryChange(values, form)}
+              />
               <ReuseButton
                 htmlType="submit"
                 variant="secondary"

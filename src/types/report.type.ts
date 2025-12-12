@@ -4,9 +4,11 @@ interface IReport {
   comment: string;
   image: string[];
   createdAt: string;
+  reporterId: string;
   reporterName: string;
   reporterEmail: string;
   reporterRole?: string;
+  targetUserId: string;
   targetUserName: string;
   targetUserEmail: string;
   targetUserRole?: string;

@@ -30,8 +30,8 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
     },
     {
       title: "Transaction ID",
-      dataIndex: "stripeTransferId", // Updated to match the actual data (transaction ID)
-      key: "stripeTransferId",
+      dataIndex: "stripePaymentIntentId", // Updated to match the actual data (transaction ID)
+      key: "stripePaymentIntentId",
     },
     {
       title: "User Name",

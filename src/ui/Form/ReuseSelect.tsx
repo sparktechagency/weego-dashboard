@@ -53,7 +53,7 @@ const ReuseSelect = ({
         <Select
           mode={mode}
           className={cn(
-            "!h-10 !text-base-color !placeholder:text-[#B5B5B5] !border-none !ring-0 rounded-md ",
+            "!min-h-10 !text-base-color !placeholder:text-[#B5B5B5] !border-none !ring-0 rounded-md ",
             selectClassName
           )}
           value={value}

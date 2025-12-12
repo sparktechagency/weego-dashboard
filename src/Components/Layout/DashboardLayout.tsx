@@ -4,7 +4,7 @@ import { Content, Header } from "antd/es/layout/layout";
 import { useEffect, useState } from "react";
 import logoutLogo from "/images/dashboard-logo/logout.svg";
 import getActiveKeys from "../../utils/activeKey";
-import { adminPaths } from "../../Routes/admin.route";
+// import { adminPaths } from "../../Routes/admin.route";
 import { sidebarItemsGenerator } from "../../utils/sidebarItemsGenerator";
 import Sider from "antd/es/layout/Sider";
 import Topbar from "../Shared/Topbar";
@@ -12,6 +12,8 @@ import { AllImages } from "../../../public/images/AllImages";
 import { commonPaths } from "../../Routes/common.route";
 import useUserData from "../../hooks/useUserData";
 import Cookies from "js-cookie";
+import { filterAdminPathsByUser } from "../../utils/filterAdminPathsByPermission";
+import { IJwtPayload } from "../../types";
 
 const DashboardLayout = () => {
   const userData = useUserData();
@@ -56,15 +58,17 @@ const DashboardLayout = () => {
 
   const handleLogout = () => {
     Cookies.remove("weego_accessToken");
-    window.location.href = "/sign-in";
+    window.location.href = "/";
     window.location.reload();
   };
 
   const activeKeys = getActiveKeys(normalizedPath);
+
+  const filteredAdminPaths = filterAdminPathsByUser(userData as IJwtPayload);
+
   const menuItems =
     userData?.role?.[0] === "admin"
-      ? //   ? sidebarItemsGenerator(adminPaths, "admin")
-        sidebarItemsGenerator(adminPaths, userData?.role?.[0])
+      ? sidebarItemsGenerator(filteredAdminPaths, userData?.role?.[0])
       : [];
 
   const otherItem = sidebarItemsGenerator(

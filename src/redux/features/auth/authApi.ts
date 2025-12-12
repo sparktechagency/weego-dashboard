@@ -26,8 +26,8 @@ const authApi = baseApi.injectEndpoints({
     resendForgetOTP: build.mutation({
       query: (req) => {
         return {
-          url: `/otp/resend-otp`,
-          method: "PATCH",
+          url: `/auth/resend-otp`,
+          method: "POST",
           body: req.body,
         };
       },
@@ -36,8 +36,18 @@ const authApi = baseApi.injectEndpoints({
     forgetOtpVerify: build.mutation({
       query: (req) => {
         return {
-          url: `${auth_url}/verify-otp`,
-          method: "PATCH",
+          url: `/auth/verify-otp`,
+          method: "POST",
+          body: req.body,
+        };
+      },
+      invalidatesTags: [tagTypes.auth],
+    }),
+    forgetOtpVerifyAfterResend: build.mutation({
+      query: (req) => {
+        return {
+          url: `/auth/verify-resendotp`,
+          method: "POST",
           body: req.body,
         };
       },
@@ -47,7 +57,7 @@ const authApi = baseApi.injectEndpoints({
       query: (req) => {
         return {
           url: `${auth_url}/reset-password`,
-          method: "PATCH",
+          method: "POST",
           body: req.body,
         };
       },
@@ -71,6 +81,7 @@ export const {
   useForgetPasswordMutation,
   useResendForgetOTPMutation,
   useForgetOtpVerifyMutation,
+  useForgetOtpVerifyAfterResendMutation,
   useResetPasswordMutation,
   useChangePasswordMutation,
 } = authApi;

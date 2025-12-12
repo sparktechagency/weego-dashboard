@@ -13,7 +13,7 @@ interface SidebarItem {
 
 interface SidebarItemWithChildren {
   key: string;
-  icon: JSX.Element | null;
+  icon: JSX.Element | string | null;
   label: JSX.Element;
   children?: { key: string; label: JSX.Element }[];
 }

@@ -11,6 +11,7 @@ import {
 import tryCatchWrapper from "../../utils/tryCatchWrapper";
 import AdminAllAdminTable from "../../ui/Tables/AdminAllAdminTable";
 import AddAdminModal from "../../ui/Modal/AdminAllAdmin/AddAdminModal";
+import EditAdminModal from "../../ui/Modal/AdminAllAdmin/EditAdminAllAdmin";
 
 const AdminAllAdmin = () => {
   const [deleteAdmin] = useDeleteAdminMutation();
@@ -32,7 +33,7 @@ const AdminAllAdmin = () => {
   console.log(allAdminData);
 
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
-  // const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   // const [isViewModalVisible, setIsViewModalVisible] = useState(false);
 
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
@@ -42,10 +43,10 @@ const AdminAllAdmin = () => {
     setIsAddModalVisible(true);
   };
 
-  // const showEditModal = (record: any) => {
-  //   setCurrentRecord(record);
-  //   setIsEditModalVisible(true);
-  // };
+  const showEditModal = (record: any) => {
+    setCurrentRecord(record);
+    setIsEditModalVisible(true);
+  };
 
   // const showViewUserModal = (record: any) => {
   //   setCurrentRecord(record);
@@ -59,7 +60,7 @@ const AdminAllAdmin = () => {
 
   const handleCancel = () => {
     setIsAddModalVisible(false);
-    // setIsEditModalVisible(false);
+    setIsEditModalVisible(false);
     // setIsViewModalVisible(false);
     setIsDeleteModalVisible(false);
     setCurrentRecord(null);
@@ -67,7 +68,7 @@ const AdminAllAdmin = () => {
 
   const handleDeleteCancel = () => {
     setIsDeleteModalVisible(false);
-    // setCurrentRecord(null);
+    setCurrentRecord(null);
   };
 
   const handleDelete = async () => {
@@ -112,6 +113,7 @@ const AdminAllAdmin = () => {
         <AdminAllAdminTable
           data={allAdminData}
           loading={isFetching}
+          showEditModal={showEditModal}
           // showViewModal={showViewUserModal}
           showDeleteModal={showDeleteModal}
           setPage={setPage}
@@ -121,11 +123,11 @@ const AdminAllAdmin = () => {
         />
       </div>
 
-      {/* <EditAdminModal
+      <EditAdminModal
         isEditModalVisible={isEditModalVisible}
         handleCancel={handleCancel}
         currentRecord={currentRecord}
-      /> */}
+      />
       <AddAdminModal
         isAddModalVisible={isAddModalVisible}
         handleCancel={handleCancel}

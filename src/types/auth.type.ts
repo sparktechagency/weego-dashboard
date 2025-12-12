@@ -7,7 +7,9 @@ interface IJwtPayload {
   role: string[];
   isComplete: boolean;
   isLoginToken: boolean;
-  iat: number; // issued at (token issue time)
+  adminRole: string; // added
+  categoryPermissions: string[]; // added
+  iat: number; // issued at
   exp: number; // expiry time
 }
 

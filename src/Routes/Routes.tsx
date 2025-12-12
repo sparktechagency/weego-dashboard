@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import {
   createBrowserRouter,
   RouteObject,
@@ -7,7 +8,6 @@ import { useEffect } from "react";
 
 import Loading from "../ui/Loading";
 import { routeGenerator } from "../utils/routesGenerator";
-import { adminPaths } from "./admin.route";
 import ProtectedRoute from "./ProtectedRoute";
 
 //* Auth
@@ -19,43 +19,63 @@ import UpdatePassword from "../pages/Auth/UpdatePassword";
 import NotFound from "../ui/NotFound/NotFound";
 import DashboardLayout from "../Components/Layout/DashboardLayout";
 import { commonPaths } from "./common.route";
+
+import Cookies from "js-cookie";
+import { decodedToken } from "../utils/jwt";
+import { filterAdminPathsByUser } from "../utils/filterAdminPathsByPermission";
 import useUserData from "../hooks/useUserData";
 
-// eslint-disable-next-line react-refresh/only-export-components
+// ========================
+// Auth Redirect Component
+// ========================
 function AuthRedirect() {
   const user = useUserData();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (user && user?.role?.[0] === "admin") {
-      navigate(`/${user?.role?.[0]}/overview`, {
-        replace: true,
-      });
+      navigate(`/${user?.role?.[0]}/overview`, { replace: true });
     } else {
       navigate("/sign-in", { replace: true });
     }
   }, [navigate, user]);
 
-  // Optionally display a loading indicator
   return <Loading />;
 }
-// Define routes with TypeScript types
+
+// ========================
+// Get Current User from Cookie
+// ========================
+const token = Cookies.get("weego_accessToken");
+const currentUser = token ? decodedToken(token) : null;
+
+// Filter admin routes based on user
+const filteredAdminPaths = filterAdminPathsByUser(currentUser);
+
+// ========================
+// ROUTER CONFIG
+// ========================
 const router: RouteObject[] = [
+  // Redirect root
   {
     path: "/",
-    index: true, // This applies to the exact path "/"
+    index: true,
     element: <AuthRedirect />,
   },
   {
     path: "/dashboard",
-    index: true, // This applies to the exact path "/"
+    index: true,
     element: <AuthRedirect />,
   },
   {
     path: "/admin",
-    index: true, // This applies to the exact path "/"
+    index: true,
     element: <AuthRedirect />,
   },
+
+  // =============================
+  // Main ADMIN LAYOUT (Only once!)
+  // =============================
   {
     path: "admin",
     element: (
@@ -63,17 +83,15 @@ const router: RouteObject[] = [
         <DashboardLayout />
       </ProtectedRoute>
     ),
-    children: routeGenerator(adminPaths), // Generating child routes dynamically
+    children: [
+      ...routeGenerator(filteredAdminPaths), // Filtered by permission
+      ...routeGenerator(commonPaths), // Always allowed
+    ],
   },
-  {
-    path: "admin",
-    element: (
-      <ProtectedRoute role="admin">
-        <DashboardLayout />
-      </ProtectedRoute>
-    ),
-    children: routeGenerator(commonPaths), // Generating child routes dynamically
-  },
+
+  // =============================
+  // AUTH ROUTES
+  // =============================
   {
     path: "sign-in",
     element: <SignIn />,
@@ -83,20 +101,22 @@ const router: RouteObject[] = [
     element: <ForgotPassword />,
   },
   {
-    path: "forgot-password/otp-verify",
+    path: "forgot-password/verify-otp",
     element: <OtpPage />,
   },
   {
     path: "update-password",
     element: <UpdatePassword />,
   },
+
+  // Catch-all 404
   {
-    path: "*", // Catch-all for undefined routes
+    path: "*",
     element: <NotFound />,
   },
 ];
 
-// Create the router using createBrowserRouter
+// Create the router
 const routes = createBrowserRouter(router);
 
 export default routes;

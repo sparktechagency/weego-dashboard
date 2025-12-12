@@ -1,11 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Image, Modal } from "antd";
 import SpinLoader from "../../SpinLoader";
-import { useGetReportDetailsQuery } from "../../../redux/features/report/reportApi";
+import {
+  useGetReportDetailsQuery,
+  useMarkAsSolvedMutation,
+} from "../../../redux/features/report/reportApi";
 import { IReport } from "../../../types/report.type";
 import { BiMessageSquare } from "react-icons/bi";
 import { formatDateTime } from "../../../utils/dateFormet";
 import { getImageUrl } from "../../../helpers/config/envConfig";
+import { useCreateConversationMutation } from "../../../redux/features/conversation/conversationApi";
+import tryCatchWrapper from "../../../utils/tryCatchWrapper";
+import { useNavigate } from "react-router-dom";
+import ReuseButton from "../../Button/ReuseButton";
 
 interface ViewReportModalProps {
   isViewModalVisible: boolean;
@@ -18,6 +25,9 @@ const ViewReportModal: React.FC<ViewReportModalProps> = ({
   handleCancel,
   currentRecord,
 }) => {
+  const navigate = useNavigate();
+  const [createConversation] = useCreateConversationMutation();
+  const [markAsSolved] = useMarkAsSolvedMutation();
   const { data, isFetching } = useGetReportDetailsQuery(currentRecord?._id, {
     skip: !isViewModalVisible || !currentRecord?._id,
     refetchOnMountOrArgChange: true,
@@ -26,6 +36,26 @@ const ViewReportModal: React.FC<ViewReportModalProps> = ({
   const reportData: IReport = data?.data?.attributes?.[0] || {};
 
   const serverUrl = getImageUrl();
+
+  const onCreateConversation = async (id: string) => {
+    const res = await tryCatchWrapper(
+      createConversation,
+      { body: { users: id } },
+      "Adding Category..."
+    );
+
+    if (res?.statusCode === 201) {
+      handleCancel();
+      navigate("/admin/messages");
+    }
+  };
+
+  const handleMarkAsResolved = async (id: string) => {
+    const res = await tryCatchWrapper(markAsSolved, { params: id });
+    if (res?.statusCode === 200) {
+      handleCancel();
+    }
+  };
   return (
     <Modal
       open={isViewModalVisible}
@@ -101,10 +131,17 @@ const ViewReportModal: React.FC<ViewReportModalProps> = ({
               <p className="text-xs text-gray-600 mb-4">
                 {reportData?.reporterEmail || "N/A"}
               </p>
-              <button className="w-full bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold py-2.5 px-4 rounded flex items-center justify-center gap-2 transition-colors">
-                <BiMessageSquare size={16} />
-                Contact Reporter
-              </button>
+              {reportData?.reporterId && (
+                <button
+                  onClick={() => {
+                    onCreateConversation(reportData?.reporterId);
+                  }}
+                  className="w-full bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold py-2.5 px-4 rounded flex items-center justify-center gap-2 transition-colors"
+                >
+                  <BiMessageSquare size={16} />
+                  Contact Reporter
+                </button>
+              )}
             </div>
 
             <div className="bg-[#EFEFEF] p-5 rounded-lg">
@@ -117,12 +154,31 @@ const ViewReportModal: React.FC<ViewReportModalProps> = ({
               <p className="text-xs text-gray-600 mb-4">
                 {reportData?.targetUserEmail || "N/A"}
               </p>
-              <button className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2.5 px-4 rounded flex items-center justify-center gap-2 transition-colors">
-                <BiMessageSquare size={16} />
-                Contact Target User
-              </button>
+              {
+                // @ts-ignore
+                reportData?.targetUserId && (
+                  <button
+                    onClick={() => {
+                      onCreateConversation(reportData?.targetUserId);
+                    }}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2.5 px-4 rounded flex items-center justify-center gap-2 transition-colors"
+                  >
+                    <BiMessageSquare size={16} />
+                    Contact Target User
+                  </button>
+                )
+              }
             </div>
           </div>
+          {!reportData?.isSolved && (
+            <ReuseButton
+              variant="secondary"
+              className="!bg-secondary-color/20 !w-fit !mt-5 !text-secondary-color !font-semibold"
+              onClick={() => handleMarkAsResolved(reportData?._id)}
+            >
+              Mark as Resolved
+            </ReuseButton>
+          )}
         </div>
       )}
     </Modal>

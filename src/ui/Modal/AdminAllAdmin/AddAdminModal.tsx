@@ -7,11 +7,68 @@ import ReuseInput from "../../Form/ReuseInput";
 import ReuseButton from "../../Button/ReuseButton";
 import { useAddAdminMutation } from "../../../redux/features/allAdmin/allAdminApi";
 import tryCatchWrapper from "../../../utils/tryCatchWrapper";
+import ReuseSelect from "../../Form/ReuseSelect";
 
 interface AddAdminModalProps {
   isAddModalVisible: boolean;
   handleCancel: () => void;
 }
+
+// eslint-disable-next-line react-refresh/only-export-components
+export const categoryOptions = [
+  {
+    value: "all",
+    label: "All",
+  },
+  {
+    value: "users",
+    label: "Users",
+  },
+  {
+    value: "category",
+    label: "Category",
+  },
+  {
+    value: "message",
+    label: "Message",
+  },
+  {
+    value: "all-services",
+    label: "All Services",
+  },
+  {
+    value: "services-management",
+    label: "Services Management",
+  },
+  {
+    value: "earning",
+    label: "Earning",
+  },
+  {
+    value: "transaction",
+    label: "Transaction",
+  },
+  {
+    value: "reports",
+    label: "Reports",
+  },
+  {
+    value: "deleted-accounts",
+    label: "Deleted Accounts",
+  },
+  {
+    value: "all-admin",
+    label: "All Admin",
+  },
+  {
+    value: "app-report",
+    label: "App Report",
+  },
+  {
+    value: "improvement-suggestion",
+    label: "Improvement Suggestion",
+  },
+];
 
 const inputStructure = [
   {
@@ -40,12 +97,21 @@ const AddAdminModal: React.FC<AddAdminModalProps> = ({
   isAddModalVisible,
   handleCancel,
 }) => {
+  const handleCategoryChange = (values: string[], form: any) => {
+    if (values.includes("all")) {
+      // If "all" is selected, ignore others
+      form.setFieldsValue({ category: ["all"] });
+    } else {
+      form.setFieldsValue({ category: values });
+    }
+  };
+
   const [addAdmin] = useAddAdminMutation();
   const [form] = Form.useForm();
   const handleFinish = async (values: any) => {
     const res = await tryCatchWrapper(
       addAdmin,
-      { body: { ...values, adminRole: "sub-admin" } },
+      { body: { ...values } },
       "Creating New Admin..."
     );
     console.log(res);
@@ -85,6 +151,15 @@ const AddAdminModal: React.FC<AddAdminModalProps> = ({
                   rules={input.rules}
                 />
               ))}
+              <ReuseSelect
+                Typolevel={5}
+                name="categoryPermissions"
+                options={categoryOptions}
+                label="Category"
+                placeholder="Select Category"
+                mode="multiple"
+                onChange={(values: any) => handleCategoryChange(values, form)}
+              />
               <ReuseButton
                 htmlType="submit"
                 variant="secondary"

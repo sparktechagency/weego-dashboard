@@ -5,9 +5,15 @@ import UserModal from "../../../ui/Modal/User/UserModal";
 import BlockModal from "../../../ui/Modal/BlockModal";
 import UnblockModal from "../../../ui/Modal/UnblockModal";
 import AdminConstractorTable from "../../../ui/Tables/AdminUsers/AdminConstractorTable";
-import { useGetAllUsersQuery } from "../../../redux/features/users/usersApi";
+import {
+  useBlockAndUnblockUserMutation,
+  useGetAllUsersQuery,
+} from "../../../redux/features/users/usersApi";
+import tryCatchWrapper from "../../../utils/tryCatchWrapper";
 
 const AdminAllContractors = () => {
+  const [blockAndUnblockUser] = useBlockAndUnblockUserMutation();
+
   const [page, setPage] = useState(1);
   const limit = 12;
   const [searchText, setSearchText] = useState("");
@@ -49,13 +55,29 @@ const AdminAllContractors = () => {
     setCurrentRecord(null);
   };
 
-  const handleBlock = (record: any) => {
-    handleCancel();
-    console.log(record);
+  const handleBlock = async (record: any) => {
+    const res = await tryCatchWrapper(
+      blockAndUnblockUser,
+      {
+        params: record?._id,
+      },
+      "Blocking..."
+    );
+    if (res?.statusCode === 200) {
+      handleCancel();
+    }
   };
-  const handleUnblock = (record: any) => {
-    handleCancel();
-    console.log(record);
+  const handleUnblock = async (record: any) => {
+    const res = await tryCatchWrapper(
+      blockAndUnblockUser,
+      {
+        params: record?._id,
+      },
+      "Unblocking..."
+    );
+    if (res?.statusCode === 200) {
+      handleCancel();
+    }
   };
   return (
     <div className=" min-h-[90vh]">

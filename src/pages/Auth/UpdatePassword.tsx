@@ -6,12 +6,32 @@ import ReusableForm from "../../ui/Form/ReuseForm";
 import ReuseInput from "../../ui/Form/ReuseInput";
 import ReuseButton from "../../ui/Button/ReuseButton";
 import { LuKey } from "react-icons/lu";
+import { useResetPasswordMutation } from "../../redux/features/auth/authApi";
+import tryCatchWrapper from "../../utils/tryCatchWrapper";
+import Cookies from "js-cookie";
+import { Form } from "antd";
 
 const UpdatePassword = () => {
+  const [form] = Form.useForm();
   const router = useNavigate();
-  const onFinish = (values: any) => {
-    console.log("Received values of update form:", values);
-    router("/sign-in");
+  const [resetPassword] = useResetPasswordMutation();
+
+  const onFinish = async (values: any) => {
+    const res = await tryCatchWrapper(
+      resetPassword,
+      {
+        body: {
+          password: values.confirmPassword,
+        },
+      },
+      "Resetting Password..."
+    );
+
+    if (res?.statusCode === 200) {
+      Cookies.remove("weego_resetPasswordToken");
+      form.resetFields();
+      router("/sign-in");
+    }
   };
 
   return (
@@ -37,7 +57,7 @@ const UpdatePassword = () => {
               </div>
             </div>
             {/* -------- Form Start ------------ */}
-            <ReusableForm handleFinish={onFinish}>
+            <ReusableForm form={form} handleFinish={onFinish}>
               <ReuseInput
                 inputType="password"
                 name="password"

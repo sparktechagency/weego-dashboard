@@ -7,13 +7,40 @@ import Container from "../../ui/Container";
 import ReusableForm from "../../ui/Form/ReuseForm";
 import ReuseInput from "../../ui/Form/ReuseInput";
 import ReuseButton from "../../ui/Button/ReuseButton";
+import { useForgetPasswordMutation } from "../../redux/features/auth/authApi";
+import tryCatchWrapper from "../../utils/tryCatchWrapper";
+import Cookies from "js-cookie";
+import { Form } from "antd";
 
 const ForgotPassword = () => {
+  const [form] = Form.useForm();
   const router = useNavigate();
-  const onFinish = (values: any) => {
-    console.log("Received values of forgot form:", values);
-    router("/forgot-password/otp-verify");
+  const [forgetPassword] = useForgetPasswordMutation();
+
+  const onFinish = async (values: any) => {
+    const res = await tryCatchWrapper(
+      forgetPassword,
+      {
+        body: values,
+      },
+      "Forgoting Password..."
+    );
+
+    if (res?.statusCode === 200) {
+      Cookies.set("weego_forget_password_token", res?.data?.attributes, {
+        path: "/",
+        expires: 1,
+      });
+      Cookies.set("weego_email", values.email, {
+        path: "/",
+        expires: 1,
+      });
+      Cookies.remove("weego_is_resend");
+      form.resetFields();
+      router("/forgot-password/verify-otp");
+    }
   };
+
   return (
     <div className="bg-secondary-color text-primary-color">
       <Container>
@@ -33,7 +60,7 @@ const ForgotPassword = () => {
               </p>
             </div>
 
-            <ReusableForm handleFinish={onFinish}>
+            <ReusableForm form={form} handleFinish={onFinish}>
               <ReuseInput
                 name="email"
                 label="Email"
@@ -48,7 +75,7 @@ const ForgotPassword = () => {
 
                 // icon={allIcons.arrowRight}
               >
-                Sign In
+                Forget Password
               </ReuseButton>
             </ReusableForm>
 

@@ -6,19 +6,98 @@ import { useNavigate } from "react-router-dom";
 import Container from "../../ui/Container";
 import ReuseButton from "../../ui/Button/ReuseButton";
 import { LuMailCheck } from "react-icons/lu";
+import {
+  useForgetOtpVerifyAfterResendMutation,
+  useForgetOtpVerifyMutation,
+  useResendForgetOTPMutation,
+} from "../../redux/features/auth/authApi";
+import tryCatchWrapper from "../../utils/tryCatchWrapper";
+import Cookies from "js-cookie";
 
 const OTPVerify = () => {
   const router = useNavigate();
   const [otp, setOtp] = useState("");
 
-  const handleOTPSubmit = () => {
-    if (otp.length === 6) {
-      console.log("OTP:", otp);
-      if (window?.location?.pathname === "/sign-up/otp-verify") {
-        router("/");
-      } else {
-        router("/update-password");
+  const [otpMatch] = useForgetOtpVerifyMutation();
+  const [otpMatchAfterResend] = useForgetOtpVerifyAfterResendMutation();
+  const [resendOtp] = useResendForgetOTPMutation();
+  const email = Cookies.get("weego_email");
+  const resend = Cookies.get("weego_is_resend");
+
+  const handleOTPSubmit = async () => {
+    if (resend) {
+      if (otp.length === 6) {
+        const res = await tryCatchWrapper(
+          otpMatchAfterResend,
+          {
+            body: {
+              otp: otp,
+            },
+          },
+          "Verifying..."
+        );
+        if (res?.statusCode === 200) {
+          setOtp("");
+          Cookies.set(
+            "weego_resetPasswordToken",
+            res?.data?.forgetPasswordToken,
+            {
+              path: "/",
+              expires: 1,
+            }
+          );
+          Cookies.remove("weego_is_resend");
+          Cookies.remove("weego_email");
+          Cookies.remove("weego_forget_password_token");
+          router("/update-password");
+        }
       }
+    } else {
+      if (otp.length === 6) {
+        const res = await tryCatchWrapper(
+          otpMatch,
+          {
+            body: {
+              otp: otp,
+            },
+          },
+          "Verifying..."
+        );
+        if (res?.statusCode === 200) {
+          setOtp("");
+          Cookies.set(
+            "weego_resetPasswordToken",
+            res?.data?.forgetPasswordToken,
+            {
+              path: "/",
+              expires: 1,
+            }
+          );
+          Cookies.remove("weego_is_resend");
+          Cookies.remove("weego_email");
+          Cookies.remove("weego_forget_password_token");
+          router("/update-password");
+        }
+      }
+    }
+  };
+
+  const handleResendOtp = async () => {
+    const res = await tryCatchWrapper(
+      resendOtp,
+      {
+        body: {
+          email,
+        },
+      },
+      "Sending OTP..."
+    );
+
+    if (res?.statusCode === 200) {
+      Cookies.set("weego_is_resend", "true", {
+        path: "/",
+        expires: 1,
+      });
     }
   };
 
@@ -37,7 +116,7 @@ const OTPVerify = () => {
                 Check your email
               </h1>
               <p className="text-lg sm:text-xl mb-2 text-primary-color">
-                We sent a verification link to your contact email
+                We sent a verification link to your contact email {email}
               </p>
             </div>
 
@@ -66,7 +145,10 @@ const OTPVerify = () => {
             </Form>
             <div className="flex justify-center gap-2 py-1 mt-5">
               <p>Didn’t receive code?</p>
-              <p className="!text-[#DCF995] !underline font-semibold cursor-pointer">
+              <p
+                onClick={handleResendOtp}
+                className="!text-[#DCF995] !underline font-semibold cursor-pointer"
+              >
                 Click to resend
               </p>
             </div>

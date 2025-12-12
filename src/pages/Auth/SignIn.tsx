@@ -45,7 +45,7 @@ const SignIn = () => {
         secure: false,
       });
       form.resetFields();
-      router("/", { replace: true });
+      window.location.reload();
     } else if (res?.statusCode === 200 && res?.data?.user?.role !== "admin") {
       form.resetFields();
       toast.error("Access Denied", {

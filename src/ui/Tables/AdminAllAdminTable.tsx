@@ -2,14 +2,14 @@
 import React from "react";
 import { Space, Tooltip } from "antd";
 // import { GoEye } from "react-icons/go";
-import { MdDelete } from "react-icons/md";
+import { MdDelete, MdModeEditOutline } from "react-icons/md";
 import ReuseTable from "../../utils/ReuseTable";
 
 // Define the type for the props
 interface AdminAllAdminTableProps {
   data: any[]; // Replace `unknown` with the actual type of your data array
   loading: boolean;
-  // showEditModal: (record: any) => void;
+  showEditModal: (record: any) => void;
   // showViewModal: (record: any) => void; // Function to handle viewing a user
   showDeleteModal: (record: any) => void; // Function to handle blocking a user
   // showUnblockModal: (record: any) => void; // Function to handle unblocking a user
@@ -22,7 +22,7 @@ interface AdminAllAdminTableProps {
 const AdminAllAdminTable: React.FC<AdminAllAdminTableProps> = ({
   data,
   loading,
-  // showEditModal,
+  showEditModal,
   // showViewModal,
   showDeleteModal,
   // showUnblockModal,
@@ -51,18 +51,37 @@ const AdminAllAdminTable: React.FC<AdminAllAdminTableProps> = ({
       key: "email",
     },
     {
+      title: "Category",
+      dataIndex: "categoryPermissions",
+      key: "categoryPermissions",
+      render: (_: unknown, record: any) => (
+        <span>
+          {record?.categoryPermissions && record?.categoryPermissions.length > 0
+            ? record?.categoryPermissions?.map((cat: string, idx: number) => (
+                <span
+                  key={cat ?? idx}
+                  className="capitalize text-sm bg-secondary-color/10 text-secondary-color rounded px-2 py-1 mr-1"
+                >
+                  {cat}{" "}
+                </span>
+              ))
+            : "N/A"}
+        </span>
+      ),
+    },
+    {
       title: "Action",
       key: "action",
       render: (_: unknown, record: any) => (
         <Space size="middle">
-          {/* <Tooltip placement="right" title="View Details">
+          <Tooltip placement="right" title="View Details">
             <button
               className="!p-0 !bg-transparent !border-none !text-secondary-color cursor-pointer"
               onClick={() => showEditModal(record)}
             >
               <MdModeEditOutline style={{ fontSize: "24px" }} />
             </button>
-          </Tooltip> */}
+          </Tooltip>
           {/* <Tooltip placement="right" title="View Details">
             <button
               className="!p-0 !bg-transparent !border-none !text-secondary-color cursor-pointer"

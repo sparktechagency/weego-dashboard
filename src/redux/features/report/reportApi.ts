@@ -31,6 +31,13 @@ const reportApi = baseApi.injectEndpoints({
       }),
       providesTags: [tagTypes.report],
     }),
+    markAsSolved: builder.mutation({
+      query: (req) => ({
+        url: `/report/read-unread/${req.params}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: [tagTypes.report],
+    }),
   }),
 });
 
@@ -39,4 +46,5 @@ export const {
   useGetReportDetailsQuery,
   useGetAppReportQuery,
   useGetImprovementSuggestionQuery,
+  useMarkAsSolvedMutation,
 } = reportApi;

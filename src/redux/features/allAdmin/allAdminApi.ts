@@ -29,8 +29,8 @@ const allAdminApi = baseApi.injectEndpoints({
     }),
     updateAdmin: build.mutation({
       query: (req) => ({
-        url: `/admin/${req?.params}`,
-        method: "PATCH",
+        url: `/admin/edit/${req?.params}`,
+        method: "PUT",
         body: req?.body,
       }),
       invalidatesTags: [tagTypes.allAdmin],
